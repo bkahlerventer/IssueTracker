@@ -1,4 +1,5 @@
 <!-- Begin footer.tpl -->
+</td>
 </tr>
 </table>
 <table width="100%" border="0">
