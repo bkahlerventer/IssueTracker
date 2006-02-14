@@ -1,157 +1,77 @@
 <?php
 /* $Id: funcs.php 2 2004-08-05 21:42:03Z eroberts $ */
 /**
- * @package Issue-Tracker
- * @subpackage Announcements
- */
-
-if (eregi(basename(__FILE__),$_SERVER['PHP_SELF'])) {
-  print "Direct module access forbidden.";
-  exit;
+* @package Issue-Tracker
+* @subpackage Alerts
+*/
+if (preg_match('/'.basename(__FILE__).'/',$_SERVER['PHP_SELF'])) {
+	print('Direct module access forbidden.');
+	exit;
 }
 
-/* {{{ Function: announcement_title */
 /**
- * Gets title for announement
- *
- * @param integer $aid Id of announcement to pull title for
- * @return string $title
- */
-function announcement_title($aid)
-{
-  global $dbi;
+* Gets title for alert
+*
+* @param integer $aid Id of alert to pull title for
+* @return string $title
+*/
+function alert_title($aid) {
+	global $dbi;
 
-	$sql  = "SELECT title ";
-	$sql .= "FROM announcements ";
-	$sql .= "WHERE aid='$aid'";
-	$result = $dbi->query($sql);
-	if ($dbi->num_rows($result) > 0) {
-		list($title) = $dbi->fetch($result);
-    $dbi->free($result);
-    return $title;
-  }
+	$sql = "SELECT title FROM alerts WHERE aid='$aid'";
+	$title = $dbi->fetch_one($sql);
+	return $title;
 }
-/* }}} */
 
-/* {{{ Function: announcements */
 /**
- * Pulls an array of announcements for the given group,
- * if gid is omitted then pull for global announcements
- *
- * @param integer $gid Id of group to pull announcements for
- * @return array
- */
-function announcements($gid = null)
-{
-  global $dbi;
+* Pulls an array of alerts for the given group,
+* if gid is omitted then pull for global alerts
+*
+* @param integer $gid Id of group to pull alerts for
+* @return array
+*/
+function alerts($gid = null) {
+	global $dbi;
 
-  // make sure to initialize $announcements as an array
-  $announcements = array();
+	// make sure to initialize $alerts as an array
+	$alerts = array();
 
-  if (empty($gid)) {
-    $sql  = "SELECT aid,title ";
-    $sql .= "FROM announcements ";
-    $sql .= "WHERE is_global='t'";
-    $sql .= "ORDER BY aid DESC";
-  } else {
-    $sql  = "SELECT a.aid,a.title ";
-    $sql .= "FROM announcements a,announce_permissions p ";
-    $sql .= "WHERE a.aid=p.aid ";
-    $sql .= "AND p.gid='$gid' ";
-    $sql .= "ORDER BY a.aid DESC";
-  }
-
-  $result = $dbi->query($sql);
-	if ($dbi->num_rows($result) > 0) {
-    while (list($aid,$title) = $dbi->fetch($result)) {
-      $announcements[$aid] = $title;
-    }
-
-    $dbi->free($result);
-  }
-
-  if (!empty($gid)) {
-    $sql  = "SELECT s.parent_gid ";
-    $sql .= "FROM sub_groups s, groups g ";
-    $sql .= "WHERE s.parent_gid=g.gid ";
-    $sql .= "AND s.child_gid='$gid' ";
-    $sql .= "AND g.prop_announce='t'";
-    $result = $dbi->query($sql);
-    if ($dbi->num_rows($result) > 0) {
-      list($parent) = $dbi->fetch($result);
-      $dbi->free($result);
-      $a = announcements($parent);
-
-      if (count($a) > 0) {
-        foreach ($a as $key => $val) {
-          if (!array_key_exists($key,$announcements)) {
-            $announcements[$key] = $val;
-          }
-        }
-      }
-    }
-
-    $sql  = "SELECT child_gid ";
-    $sql .= "FROM sub_groups ";
-    $sql .= "WHERE parent_gid='$gid' ";
-    $sql .= "AND prop_announce='t'";
-    $result = $dbi->query($sql);
-    if ($dbi->num_rows($result) > 0) {
-      while (list($child) = $dbi->fetch($result)) {
-        $a = announcements($child);
-
-        if (count($a) > 0) {
-          foreach ($a as $key => $val) {
-            if (!array_key_exists($key,$announcements)) {
-              $announcements[$key] = $val;
-            }
-          }
-        }
-      }
-
-      $dbi->free($result);
-    }
-  }
-
-  return $announcements;
+	if (empty($gid)) {
+		$sql = "SELECT aid,title FROM alerts 
+				WHERE is_global='t' ORDER BY aid DESC";
+	} else {
+		$sql = "SELECT a.aid,a.title FROM alerts a,alert_permissions p 
+				WHERE a.aid=p.aid AND p.gid='$gid' ORDER BY a.aid DESC";
+	}
+	$alerts = $dbi->fetch_all($sql,'array');
+	return $alerts;
 }
-/* }}} */
 
-/* {{{ Function: can_view_announcement */
 /**
- * Determine if a user can see an announcement
- *
- * @param integer $aid Id of announcement
- * @return boolean
- */
-function can_view_announcement($aid)
-{
-  global $dbi;
-
-	$sql  = "SELECT aid ";
-	$sql .= "FROM announcements ";
-	$sql .= "WHERE aid='$aid' ";
-	$sql .= "AND is_global='t'";
-	$result = $dbi->query($sql);
-	if($dbi->num_rows($result) > 0){
-    $dbi->free($result);
+* Determine if a user can see an alert
+*
+* @param integer $aid Id of alert
+* @return boolean
+*/
+function can_view_alert($aid) {
+	global $dbi;
+	
+	$sql = "SELECT aid FROM alerts 
+			WHERE aid='$aid' AND is_global='t'";
+	$aid = $dbi->fetch_one($sql);
+	if (!empty(is_integer($aid)) {
 		return TRUE;
 	}
 
-  $sql  = "SELECT gid ";
-  $sql .= "FROM announce_permissions ";
-  $sql .= "WHERE aid='$aid'";
-  $result = $dbi->query($sql);
-	if($dbi->num_rows($result) > 0){
-    while(list($gid) = $dbi->fetch($result)){
-      if(in_array($gid,$_SESSION['groups'])){
-        return TRUE;
-      }
-    }
-    $dbi->free($result);
-  }
-
-  return FALSE;
+	$sql = "SELECT gid FROM alert_permissions WHERE aid='$aid'";
+	$gids = $dbi->fetch_all($sql,'array');
+	if (is_array($gids)) {
+		foreach ($gids as $gid) {
+			if (in_array($gid,$_SESSION['groups'])) {
+				return TRUE;
+			}
+		}
+	}
+	return FALSE;
 }
-/* }}} */
 ?>
