@@ -1,15 +1,15 @@
-<!-- Begin announce/group.tpl -->
+<!-- Begin alerts/group.tpl -->
 {opentable}
 {titlebar title=$title}
-{if count($announcements) > 0}
-{foreach from=$announcements key=aid item=title}
-<tr class="data"><td><a href="?module=announce&action=view&aid={$aid}">{$title}</a></td></tr>
+{if count($alerts) > 0}
+{foreach from=$alerts key=aid item=title}
+<tr class="data"><td><a href="?module=alerts&action=view&aid={$aid}">{$title}</a></td></tr>
 {/foreach}
 {else}
-<tr class="data"><td>No announcements for this group.</td></tr>
+<tr class="data"><td>No alerts for this group.</td></tr>
 {/if}
 {closetable}
 <br />
-{include file="announce/new.tpl"}
-<!-- End announce/group.tpl -->
+{include file="alerts/new.tpl"}
+<!-- End alerts/group.tpl -->
 
