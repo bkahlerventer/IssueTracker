@@ -182,7 +182,7 @@ CREATE TABLE event_modifications (
 	changes TEXT NOT NULL
 );
 
-CREATE TABLE announcements (
+CREATE TABLE alerts (
 	aid SERIAL,
 	title VARCHAR(128) NOT NULL,
 	message TEXT NOT NULL,
@@ -192,7 +192,7 @@ CREATE TABLE announcements (
 	PRIMARY KEY(aid)
 );
 
-CREATE TABLE announce_permissions (
+CREATE TABLE alert_permissions (
 	aid INTEGER NOT NULL,
 	gid INTEGER NOT NULL
 );

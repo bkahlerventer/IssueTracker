@@ -1,12 +1,12 @@
-<!-- Begin announce/view.tpl -->
+<!-- Begin alerts/view.tpl -->
 {opentable}
-{titlebar colspan=2 title=$announcement.title}
-<tr><td class="subtitle">Posted {$announcement.posted|userdate:TRUE} by {username id=$announcement.userid}</td></tr>
+{titlebar colspan=2 title=$alert.title}
+<tr><td class="subtitle">Posted {$alert.posted|userdate:TRUE} by {username id=$alert.userid}</td></tr>
 <tr class="data">
 <td>
-{$announcement.message|format}
+{$alert.message|format}
 </td>
 </tr>
 {closetable}
-<!-- End announce/view.tpl -->
+<!-- End alerts/view.tpl -->
 
