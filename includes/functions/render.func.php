@@ -539,5 +539,18 @@ if (defined("BROWSER")) {
     return $crumbs;
   }
   /* }}} */
+
+	/**
+	* Generate the menu array to be used for navigation
+	*/
+	function generate_navigation_menus() {
+		$_ENV['menu'] = array();
+		$_ENV['menu']['Main'] = _URL_;
+		$includes = module_includes('menu');
+		foreach ($includes as $include) {
+			include_once($include);
+		}
+		$_ENV['menu']['Logout'] = '?logout=true';
+	}
 }
 ?>
