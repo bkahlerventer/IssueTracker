@@ -59,7 +59,7 @@ function can_view_alert($aid) {
 	$sql = "SELECT aid FROM alerts 
 			WHERE aid='$aid' AND is_global='t'";
 	$aid = $dbi->fetch_one($sql);
-	if (!empty(is_integer($aid)) {
+	if (!empty(is_integer($aid))) {
 		return TRUE;
 	}
 
