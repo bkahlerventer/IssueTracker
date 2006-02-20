@@ -1,5 +1,5 @@
-<!-- Begin admin/products/edit.tpl -->
-<form method="post" action="?module=admin&action=products&subaction=edit&id={$smarty.get.id}">
+<!-- Begin products/edit.tpl -->
+<form method="post" action="?module=products&action=edit&id={$smarty.get.id}">
 <input type="hidden" name="commit" value="true">
 {opentable}
 {titlebar colspan=2 title="Update Product"}
@@ -10,5 +10,5 @@
 <tr><td class="titlebar" colspan="2"><input type="submit" value="Update Product"></td></tr>
 {closetable}
 </form>
-<!-- End admin/products/edit.tpl -->
+<!-- End products/edit.tpl -->
 

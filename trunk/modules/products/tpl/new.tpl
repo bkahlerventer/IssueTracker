@@ -1,5 +1,5 @@
-<!-- Begin admin/products/new.tpl -->
-<form method="post" action="?module=admin&action=products&subaction=new">
+<!-- Begin products/new.tpl -->
+<form method="post" action="?module=products&action=new">
 <input type="hidden" name="commit" value="true">
 {opentable}
 {titlebar colspan=2 title="New Product"}
@@ -10,5 +10,5 @@
 <tr><td class="titlebar" colspan="2"><input type="submit" value="Create Product"></td></tr>
 {closetable}
 </form>
-<!-- End admin/products/new.tpl -->
+<!-- End products/new.tpl -->
 
