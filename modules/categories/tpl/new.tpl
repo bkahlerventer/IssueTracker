@@ -1,5 +1,5 @@
-<!-- Begin admin/categories/new.tpl -->
-<form method="post" action="?module=admin&action=categories&subaction=new">
+<!-- Begin categories/new.tpl -->
+<form method="post" action="?module=categories&action=new">
 <input type="hidden" name="commit" value="true">
 {opentable}
 {titlebar colspan=2 title="New Category"}
@@ -10,5 +10,5 @@
 <tr><td class="titlebar" colspan="2"><input type="submit" value="Create Category"></td></tr>
 {closetable}
 </form>
-<!-- End admin/categories/new.tpl -->
+<!-- End categories/new.tpl -->
 
