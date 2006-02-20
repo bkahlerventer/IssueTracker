@@ -1,4 +1,4 @@
-<!-- Begin admin/products.tpl -->
+<!-- Begin products/list.tpl -->
 {opentable}
 {titlebar colspan=4 title="Products"}
 <tr class="tablehead" align="center">
@@ -13,13 +13,13 @@
 <tr class="{php}print $class;{/php}" align="center">
 <td width="5%">{$product.pid}</td>
 <td align="left">{$product.product}</td>
-<td width="5%"><a href="?module=admin&action=products&subaction=edit&id={$product.pid}"><img src="{$smarty.env.imgs.edit}" width="16" height="16" border="0" alt="Edit" /></a></td>
-<td width="5%"><a href="?module=admin&action=products&subaction=delete&id={$product.pid}"><img src="{$smarty.env.imgs.delete}" width="16" height="16" border="0" alt="Delete" /></a></td>
+<td width="5%"><a href="?module=products&action=edit&id={$product.pid}"><img src="{$smarty.env.imgs.edit}" width="16" height="16" border="0" alt="Edit" /></a></td>
+<td width="5%"><a href="?module=products&action=delete&id={$product.pid}"><img src="{$smarty.env.imgs.delete}" width="16" height="16" border="0" alt="Delete" /></a></td>
 </tr>
 {/foreach}
 {else}
 <tr class="data"><td colspan="4">No defined products.</td></tr>
 {/if}
 {closetable}
-<!-- End admin/products.tpl -->
+<!-- End products/list.tpl -->
 
