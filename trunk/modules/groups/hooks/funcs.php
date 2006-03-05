@@ -50,10 +50,6 @@ function group_name($gid)
   and @array_key_exists($gid,$groups_name_cache)) {
     return $groups_name_cache[$gid];
   } else {
-    // Since we didn't find the name in cache
-    // make sure to generate new cache file
-    gen_cache("groups","gid","name");
-    
     $sql  = "SELECT name ";
     $sql .= "FROM groups ";
     $sql .= "WHERE gid='$gid'";

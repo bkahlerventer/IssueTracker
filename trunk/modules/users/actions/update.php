@@ -79,8 +79,5 @@ if(!errors()){
 		}
 	}
 
-  gen_cache("users","userid","username");
-}
-
 redirect("?module=users&action=view&uid=".$_GET['uid']);
 ?>

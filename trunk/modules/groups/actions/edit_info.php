@@ -63,7 +63,6 @@ if ($_GET['submit'] == "true") {
 		$dbi->update("groups",$update,"WHERE gid='".$_GET['gid']."'");
 		unset($update);
 
-    gen_cache("groups","gid","name");
     
 		redirect("?module=groups&action=view&gid=".$_GET['gid']);
 	}

@@ -74,7 +74,6 @@ if (!empty($_POST['gname'])) {
       unset($update);
       session_register('GROUP_WIZARD');
       $_SESSION['GROUP_WIZARD'] = TRUE;
-      gen_cache("groups","gid","name");
       redirect("?module=groups&action=edit&type=categories&gid=$gid");
     } else {
       push_error("This group could not be created please contact "._ADMINEMAIL_." about this issue.");

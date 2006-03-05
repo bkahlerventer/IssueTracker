@@ -218,10 +218,6 @@ function username($userid,$link = FALSE)
   and @array_key_exists($userid,$users_username_cache)) {
     $username = $users_username_cache[$userid];
   } else {
-    // Since we didn't find the name in cache
-    // make sure to generate new cache file
-    gen_cache("users","userid","username");
-
   	// form query to get username
   	$sql  = "SELECT username ";
 	  $sql .= "FROM users ";

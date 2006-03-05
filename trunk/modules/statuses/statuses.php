@@ -1,14 +1,8 @@
 <?php
-/* $Id: statuses.admin.php 2 2004-08-05 21:42:03Z eroberts $ */
 /**
- * @package Issue-Tracker
- * @subpackage Administration
- */
-
-if (eregi(basename(__FILE__),$_SERVER['PHP_SELF'])) {
-  print "Direct module access forbidden.";
-	exit;
-}
+* List existing statuses
+*/
+module_check();
 
 // Used to make sure only 1 "Registered" status is defined
 list($registered) = fetch_status(TYPE_REGISTERED);

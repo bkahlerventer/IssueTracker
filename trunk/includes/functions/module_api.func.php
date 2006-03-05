@@ -1,123 +1,122 @@
 <?php
-/* $Id: module_api.func.php 2 2004-08-05 21:42:03Z eroberts $ */
-
-/* {{{ Function: module_includes */
 /**
- * Create array of files to include from modules
- *
- * @param string $hook Name of file to match
- * @param boolean $short Determines how to match filename
- * @returns string
- */
-function module_includes($hook,$short = TRUE)
-{
-  $includes = array();
+* Class for working with modules
+*
+* @author Edwin Robertson <tm@tuxmonkey.com>
+* @version 0.1
+*/
+class Module {
+	/**
+	* Look for "install" hook and run that hook for the given module.  If the hook is run successfully
+	* or does not exist then the module is added to the modules table.
+	*
+	* @param string $module Module to be installed
+	* @return boolean
+	*/
+	function install($module) {
+		# make sure to remove all leading and trailing white space
+		$module = trim($module);
 
-  if ($dir = @opendir(_MODULES_)) {
-    while (($item = readdir($dir)) !== false) {
-      if ($item == "." or $item == ".." or $item == "CVS") {
-        continue;
-      }
-		
-      if (is_dir(_MODULES_.$item)) {
-        if ($short) {
-          $filename = "$hook.php";
-        } else {
-          if (!empty($_GET['module'])) {
-            $filename = $_GET['module']."/";
-          }
-          if (!empty($_GET['action'])) {
-            $filename .= $_GET['action']."/";
-          }
-          $filename .= "$hook.php";
-        }
+		logger::debug('Installing module '.$module);	
+		# make sure the module directory exists
+		if (@is_dir($_ENV['module_path'].'/'.$module)) {
+			logger::debug('Module directory exists, looking for install hook');
+			# check to see if the install hook exists
+			if (@file_exists($_ENV['module_path'].'/'.$module.'/hooks/install.php')) {
+				if (!require_once($_ENV['module_path'].'/'.$module.'/hooks/install.php')) {
+					logger::error('Installation of '.$module.' module failed');
+					return FALSE;
+				}
+			} else {
+				logger::debug('Could not locate install module hook');
+			}
+			$insert['modules'] = $module;
+			$insert['installed'] = time();
+			$insert['version'] = !empty($version) ? trim($version) : 'N/A';
+			$_ENV['dbi']->insert('modules',$insert);
+			logger::system('Installed module '.$module.' successfully');
+			return TRUE;
+		} else {
+			logger::error('Attempted to install module which does not exist ('.$module.')');
+		}
+		return FALSE;
+	}
 
-        if (file_exists(_MODULES_.$item."/hooks/$filename")) {
-          $include = _MODULES_.$item."/hooks/$filename";
-          array_push($includes,$include);
-        }
-      }
-    }
-    closedir($dir);
-  }
+	/**
+	* Look for "uninstall" hook and run that hook for the given module.  If the hook is run successfully
+	* or does not exist, then the module is removed from the modules table.
+	*
+	* @param string $module Module to be removed
+	* @return boolean
+	*/
+	function uninstall($module) {
+		# make sure to remove all leading and trailing white space
+		$module = trim($module);
+	
+		# make sure the module director exists
+		if (@is_dir($_ENV['module_path'].'/'.$module)) {
+			# check to see if the uninstall hook exists
+			if (@file_exists($_ENV['module_path'].'/'.$module.'/hooks/uninstall.php')) {
+				if (!require_once($_ENV['module_path'].'/'.$module.'/hooks/install.php')) {
+					return FALSE;
+				}
+			}
+			$_ENV['dbi']->query("DELETE FROM modules where module='".$module."'");
+			return TRUE;
+		} else {
+			logmsg('Attempted to uninstall module which does not exist ('.$module.')');
+		}
+		return FALSE;
+	}
 
-  return $includes;
-}
-/* }}} */
+	/**
+	* Placeholder function here to make sure there is no direct access to modules
+	*
+	* @return TRUE
+	*/
+	function check() {
+		return TRUE;
+	}
 
-/* {{{ Function: module_setup */
-/**
- * Retrieves any module setup scripts and runs them, deleting the setup
- * script afterwards
- */
-function module_setup()
-{
-  if ($dir = @opendir(_MODULES_)) {
-    while (($item = readdir($dir)) !== false) {
-      if ($item == "." or $item == ".." or $item == "CVS") {
-        continue;
-      }
+	/**
+	* Pull array of "loadable" modules
+	*
+	* @return array
+	*/
+	function loadable_modules() {
+		if (empty($_ENV['lmodules'])) {
+			$_ENV['lmodules'] = $_ENV['dbi']->fetch_all("SELECT module FROM modules ORDER BY module");	
+		}
+	}
 
-      if (is_dir(_MODULES_.$item)) {
-        if (file_exists(_MODULES_.$item."/setup.$item.php")) {
-          include_once(_MODULES_.$item."/setup.$item.php");
-          
-          if (!unlink(_MODULES_.$item."/setup.$item.php")) {
-            logger("Could not remove setup file for $item module.","module_errors");
-          }
-        }
-      }
-    }
-    closedir($dir);
-  }
-}
-/* }}} */
+	/**
+	* Create an array of files to be include by given hook call
+	*
+	* @param string $hook Name of hook to match on
+	* @param boolean $short Determines if we should perform short match or not
+	* @return array
+	*/
+	function includes($hook,$short = TRUE) {
+		$includes = array();
+		$filename = $hook.'.php';
 
-/* {{{ Function: gen_cache */
-/**
- * Generate cache files
- *
- * @param string $table Table to pull data from
- * @param string $id Unique id field of table
- * @param string $data Data field of table to cache
- */
-function gen_cache($table,$id,$data)
-{
-  global $dbi,$cache_data;
+		// Make sure to update loadable modules
+		Module::loadable_modules();
 
-  if (!in_array($table,$cache_data)) {
-    return;
-  }
-
-  if ($fp = fopen(_CACHE_."$table-$data-cache.php","w")) {
-    fwrite($fp,"<?php\n");
-    fwrite($fp,"\n// DO NOT EDIT THIS FILE\n\n");
-    fwrite($fp,"\${$table}_{$data}_cache = array(\n");
-    
-    $sql  = "SELECT $id,$data ";
-    $sql .= "FROM $table ";
-    $sql .= "ORDER BY $id ASC";
-    $result = $dbi->query($sql);
-    if ($dbi->num_rows($result) > 0) {
-      $count = $dbi->num_rows($result);
-
-      for ($x = 0;$x < $count;$x++) {
-        list($key,$val) = $dbi->fetch($result);
-
-        // We stripslashes here and then addslashes later
-        // for any value that might have made it into the database
-        // without having special characters escaped
-        $val = stripslashes($val);
-
-        fwrite($fp,sprintf("\t%5.5d => '%s'%s\n",
-          $key,addslashes($val),$x != ($count - 1) ? "," : ""));
-      }
-    }
-
-    fwrite($fp,");\n");
-    fwrite($fp,"?>");
-    fclose($fp);
-  }
-}
-/* }}} */
+		if ($short !== TRUE) {
+			if (!empty($_GET['action'])) {
+				$filename .= $_GET['action'].'/'.$filename;
+			}
+			if (!empty($_GET['module'])) {
+				$filename .= $_GET['module'].'/'.$filename;
+			}
+		}
+		foreach ($_ENV['lmodules'] as $module) {
+			if (file_exists($_ENV['module_path'].'/'.$module.'/'.$filename)) {
+				array_push($includes,$_ENV['module_path'].'/'.$module.'/'.$filename);
+			}
+		}
+		return $includes;
+	}
+}		
 ?>
