@@ -1,7 +1,4 @@
 <?php
-/* $Id: permissions.func.php 2 2004-08-05 21:42:03Z eroberts $ */
-
-/* {{{ Function: is_admin */
 /**
  * Determine if a user is an admin
  *
@@ -39,9 +36,7 @@ function is_admin($userid = null)
   
   return FALSE;
 }
-/* }}} */
 
-/* {{{ Function: is_employee */
 /**
  * Determines whether or not the user is an employee
  *
@@ -71,9 +66,7 @@ function is_employee($userid = null)
 
   return FALSE;
 }
-/* }}} */
 
-/* {{{ Function: is_manager */
 /**
  * Determine if a user is a manager
  *
@@ -99,9 +92,7 @@ function is_manager($userid = null)
 
   return FALSE;
 }
-/* }}} */
 
-/* {{{ Function: permission_set */
 /**
  * Retrieve the permission set for a given user in a given group
  *
@@ -137,9 +128,7 @@ function permission_set($gid,$userid = null)
 
   return $pset;
 }
-/* }}} */
 
-/* {{{ Function: permission_set_id */
 /**
  * Retrieve the permission set id for a given user in a given group
  *
@@ -168,9 +157,7 @@ function permission_set_id($gid,$userid = null)
 
   return;
 }
-/* }}} */
 
-/* {{{ Function: permission */
 /**
  * Retrieve the text of a permission
  *
@@ -191,9 +178,7 @@ function permission($permid)
 
   return "UNKNOWN";
 }
-/* }}} */
 
-/* {{{ Function: permission_set_name */
 /**
  * Retrieve the permission set name for a permission set id
  *
@@ -216,9 +201,7 @@ function permission_set_name($psetid)
 
   return;
 }
-/* }}} */
 
-/* {{{ Function: permission_check */
 /**
  * Determine if a user has a certain permission
  *
@@ -291,42 +274,6 @@ function permission_check($perm,$gid = null,$userid = null)
     if (in_array($perm,$pset)) {
       return TRUE;
     }
-  
-    $sql  = "SELECT s.parent_gid ";
-    $sql .= "FROM sub_groups s,groups g ";
-    $sql .= "WHERE s.parent_gid=g.gid ";
-    $sql .= "AND s.child_gid='$gid' ";
-    $sql .= "AND g.prop_user='t'";
-    $result = $dbi->query($sql);
-    if ($dbi->num_rows($result) > 0) {
-      list($parent) = $dbi->fetch($result);
-      $dbi->free($result);
-      if (!empty($parent)) {
-        $pset = permission_set($parent,$userid);
-     
-        if (in_array($perm,$pset)) {
-          return TRUE;
-        }
-      }
-    }
-
-    $sql  = "SELECT child_gid ";
-    $sql .= "FROM sub_groups ";
-    $sql .= "WHERE parent_gid='$gid' ";
-    $sql .= "AND prop_issue='t'";
-    $result = $dbi->query($sql);
-    if ($dbi->num_rows($result) > 0) {
-      while (list($child) = $dbi->fetch($result)) {
-        $pset = permission_set($child,$userid);
-
-        if (in_array($perm,$pset)) {
-          $dbi->free($result);
-          return TRUE;
-        }
-      }
-
-      $dbi->free($result);
-    }
   } else {
     foreach ($_SESSION['groups'] as $key => $val) {
       $pset = permission_set($val,$userid);
@@ -334,50 +281,12 @@ function permission_check($perm,$gid = null,$userid = null)
       if (in_array($perm,$pset)) {
         return TRUE;
       }
-
-      $sql  = "SELECT s.parent_gid ";
-      $sql .= "FROM sub_groups s,groups g ";
-      $sql .= "WHERE s.parent_gid=g.gid ";
-      $sql .= "AND s.child_gid='$val' ";
-      $sql .= "AND g.prop_user='t'";
-      $result = $dbi->query($sql);
-      if ($dbi->num_rows($result) > 0) {
-        list($parent) = $dbi->fetch($result);
-        $dbi->free($result);
-        if (!empty($parent)) {
-          $pset = permission_set($parent,$userid);
-       
-          if (in_array($perm,$pset)) {
-            return TRUE;
-          }
-        }
-      }
-
-      $sql  = "SELECT child_gid ";
-      $sql .= "FROM sub_groups ";
-      $sql .= "WHERE parent_gid='$val' ";
-      $sql .= "AND prop_issue='t'";
-      $result = $dbi->query($sql);
-      if ($dbi->num_rows($result) > 0) {
-        while (list($child) = $dbi->fetch($result)) {
-          $pset = permission_set($child,$userid);
-
-          if (in_array($perm,$pset)) {
-            $dbi->free($result);
-            return TRUE;
-          }
-        }
-
-        $dbi->free($result);
-      }
     }
   }
 
   return FALSE;
 }
-/* }}} */
 
-/* {{{ Function: authenticate */
 /**
  * Attempt to authenticate a user
  *
@@ -450,9 +359,7 @@ function authenticate($username,$password)
     }
   }
 }
-/* }}} */
 
-/* {{{ Function: group_permission */
 /**
  * Determine if a permission is a group permission
  *
@@ -478,5 +385,4 @@ function group_permission($permid)
 
   return FALSE;
 }
-/* }}} */
 ?>

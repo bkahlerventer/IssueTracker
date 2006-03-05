@@ -169,9 +169,10 @@ CREATE TABLE files (
 	userid INTEGER,
 	typeid INTEGER NOT NULL,
 	uploaded_on INTEGER,
-	name MEDIUMTEXT NOT NULL,
-  file_type VARCHAR(16) NOT NULL,
-  private CHAR(1) DEFAULT 'f',
+	filetype VARCHAR(16) NOT NULL,
+	filesize BIGINT DEFAULT 0 NOT NULL,
+	filename TEXT NOT NULL,
+	private CHAR(1) DEFAULT 'f',
 	PRIMARY KEY(fid)
 );
 

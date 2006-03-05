@@ -1,21 +1,11 @@
 <?php
-/* $Id: errors.func.php 2 2004-08-05 21:42:03Z eroberts $ */
-
-/* {{{ Function: it_error_handler */
 /**
- * Customer error handling for issue-tracker
- *
- * NOTE: Do not call this function directly
- */
-function it_error_handler($errno,$errstr,$errfile,$errline)
-{
-	global $dbi,$backtrace;
-
-	$is_fatal = array(
-		E_ERROR,
-		E_CORE_ERROR,
-		E_USER_ERROR
-	);
+* Customer error handling for issue-tracker
+*
+* NOTE: Do not call this function directly
+*/
+function it_error_handler($errno,$errstr,$errfile,$errline) {
+	$is_fatal = array(E_ERROR,E_CORE_ERROR,E_USER_ERROR);
 
 	switch($errno){
 		case E_ERROR:
@@ -66,11 +56,11 @@ function it_error_handler($errno,$errstr,$errfile,$errline)
 		}
 	}
 
-	if ($dbi->link) {
+	if ($_ENV['dbi']->link) {
 		logger($string,"phperrors");
 	} else {
-    $date = "[".date_format()."]";
-    debug($date.$string,"PHP Errors");
+		$date = date('[r]',time());
+		debug($date.$string,"PHP Errors");
 		error_log($date.$string."\n",3,_LOGS_."phperrors");
 	}
 
@@ -80,57 +70,42 @@ function it_error_handler($errno,$errstr,$errfile,$errline)
 		}
 	}
 }
-/* }}} */
 
-/* {{{ Function: push_error */
 /**
- * Add a error message onto the error array, only added this function
- * because I'm lazy and didn't want to keep typing $_SESSION['errors']
- *
- * @param string $message The error message to add
- */
-function push_error($message)
-{
+* Add a error message onto the error array, only added this function
+* because I'm lazy and didn't want to keep typing $_SESSION['errors']
+*
+* @param string $message The error message to add
+*/
+function push_error($message) {
 	array_push($_SESSION['errors'],$message);
 }
-/* }}} */
 
-/* {{{ Function: push_fatal_error */
 /**
- * Add a error message to the errors array and also notify the system
- * administrator of the error message.
- *
- * @param string $message The error message to add
- */
-function push_fatal_error($message)
-{
-  global $dbi;
-
+* Add a error message to the errors array and also notify the system
+* administrator of the error message.
+*
+* @param string $message The error message to add
+*/
+function push_fatal_error($message) {
 	array_push($_SESSION['errors'],$message." The system administrator has been notified.");
-  
-  ob_start();
-  print_r($GLOBALS);
-  $contents = ob_get_contents();
-  ob_end_clean();
-  
-  $message .= "\n\n$contents";
-  admin_notify($message);
+	ob_start();
+	print_r($GLOBALS);
+	$contents = ob_get_contents();
+	ob_end_clean();
+	$message .= "\n\n$contents";
+	admin_notify($message);
 }
-/* }}} */
 
-/* {{{ Function: errors */
 /**
- * Determine if there are errors to be displayed
- *
- * @return boolean
- */
-function errors()
-{
+* Determine if there are errors to be displayed
+*
+* @return boolean
+*/
+function errors() {
 	if (count($_SESSION['errors']) != 0) {
 		return TRUE;
 	}
-
 	return FALSE;
 }
-/* }}} */
 ?>

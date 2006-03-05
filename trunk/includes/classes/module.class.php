@@ -18,11 +18,11 @@ class Module {
 
 		logger::debug('Installing module '.$module);	
 		# make sure the module directory exists
-		if (@is_dir($_ENV['module_path'].'/'.$module)) {
+		if (@is_dir(_MODULES_.'/'.$module)) {
 			logger::debug('Module directory exists, looking for install hook');
 			# check to see if the install hook exists
-			if (@file_exists($_ENV['module_path'].'/'.$module.'/hooks/install.php')) {
-				if (!require_once($_ENV['module_path'].'/'.$module.'/hooks/install.php')) {
+			if (@file_exists(_MODULES_.'/'.$module.'/hooks/install.php')) {
+				if (!require_once(_MODULES_.'/'.$module.'/hooks/install.php')) {
 					logger::error('Installation of '.$module.' module failed');
 					return FALSE;
 				}
@@ -48,10 +48,10 @@ class Module {
 		$module = trim($module);
 	
 		# make sure the module director exists
-		if (@is_dir($_ENV['module_path'].'/'.$module)) {
+		if (@is_dir(_MODULES_.'/'.$module)) {
 			# check to see if the uninstall hook exists
-			if (@file_exists($_ENV['module_path'].'/'.$module.'/hooks/uninstall.php')) {
-				if (!require_once($_ENV['module_path'].'/'.$module.'/hooks/install.php')) {
+			if (@file_exists(_MODULES_.'/'.$module.'/hooks/uninstall.php')) {
+				if (!require_once(_MODULES_.'/'.$module.'/hooks/install.php')) {
 					return FALSE;
 				}
 			}
@@ -79,9 +79,9 @@ class Module {
 	function loadable_modules() {
 		if (empty($_ENV['lmodules'])) {
 			$_ENV['lmodules'] = array();
-			if ($dir = opendir($_ENV['module_path'])) {
+			if ($dir = opendir(_MODULES_)) {
 				while (($item = readdir($dir)) !== FALSE) {
-					if (is_dir($_ENV['module_path'].'/'.$item)) {
+					if (is_dir(_MODULES_.'/'.$item) and $item != '.' and $item != '..') {
 						array_push($_ENV['lmodules'],$item);
 					}
 				}
@@ -91,11 +91,10 @@ class Module {
 	}
 
 	/**
-	* Create an array of files to be include by given hook call
+	* Include hooks that match the given hook name
 	*
 	* @param string $hook Name of hook to match on
 	* @param boolean $short Determines if we should perform short match or not
-	* @return array
 	*/
 	function includes($hook,$short = TRUE) {
 		$includes = array();
@@ -103,7 +102,7 @@ class Module {
 
 		// Make sure to update loadable modules
 		Module::loadable_modules();
-
+	
 		if ($short !== TRUE) {
 			if (!empty($_GET['action'])) {
 				$filename .= $_GET['action'].'/'.$filename;
@@ -113,11 +112,10 @@ class Module {
 			}
 		}
 		foreach ($_ENV['lmodules'] as $module) {
-			if (file_exists($_ENV['module_path'].'/'.$module.'/'.$filename)) {
-				array_push($includes,$_ENV['module_path'].'/'.$module.'/'.$filename);
+			if (file_exists(_MODULES_.'/'.$module.'/hooks/'.$filename)) {
+				include_once(_MODULES_.'/'.$module.'/hooks/'.$filename);
 			}
 		}
-		return $includes;
 	}
 }		
 ?>
