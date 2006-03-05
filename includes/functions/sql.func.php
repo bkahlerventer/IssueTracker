@@ -79,7 +79,6 @@ function category($cid)
     }
   } 
  
-  gen_cache("categories","cid","category");
   return getfield("categories","category","cid",$cid);
 }
 /* }}} */
@@ -106,7 +105,6 @@ function product($pid)
     }
   }
 
-  gen_cache("products","pid","product");
   return getfield("products","product","pid",$pid);
 }
 /* }}} */
@@ -133,7 +131,6 @@ function status($sid)
     }
   }
   
-  gen_cache("statuses","sid","status");
   return getfield("statuses","status","sid",$sid);
 }
 /* }}} */
