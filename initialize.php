@@ -26,9 +26,10 @@ if (!defined("_PATH_")) {
 }
 
 // Without these two files we're screwed
-require_once(_PATH_."/conf/config.php");
-require_once(_CLASSES_."dbi.class.php");
-include_once(SMARTY_DIR."Smarty.class.php");
+require_once(_PATH_.'/conf/config.php');
+require_once(_CLASSES_.'dbi.class.php');
+require_once(_CLASSES_.'module.class.php');
+include_once(SMARTY_DIR.'Smarty.class.php');
 
 
 // If the logs directory is not writable, quit now
@@ -56,13 +57,14 @@ if (defined("BROWSER")) {
 
 // Initialize the database abstraction layer
 $dbi = new DBI;
+$_ENV['dbi'] = &$dbi;
 $dbi->init($db);
-$dbi->set("admin_email",_ADMINEMAIL_);
-$dbi->set("email_from",_EMAIL_);
-$dbi->set("log_queries",FALSE);
+$dbi->admin_email = _ADMINEMAIL_;
+$dbi->email_from = _EMAIL_;
+$dbi->log_queries = FALSE;
 // Log any queries that take more than 1 second to complete
 // this should give us a good idea where any bottlenecks are
-$dbi->set("long_query","1");
+$dbi->long_query = 1;
 
 // Only start smarty and sessions if viewing through browser
 if (defined("BROWSER")) {
@@ -99,32 +101,16 @@ if ($dir = @opendir(_FUNCTIONS_)) {
 }
 
 // Include any module function files
-$includes = module_includes("funcs");
+$includes = Module::includes('funcs');
 foreach ($includes as $inc) {
   include($inc);
 }
 
 // Make sure to run any module specific initialization
 // or any module setup scripts
-$includes = module_includes("init");
+$includes = Module::includes('init');
 foreach ($includes as $inc) {
   include($inc);
-}
-module_setup();
-
-// Load cache files
-if ($dir = opendir(_CACHE_)) {
-  while (($file = readdir($dir)) !== false) {
-    if ($item == "." or $item == ".." or $item == "CVS" or is_dir($file)) {
-      continue;
-    }
-
-    if (is_file(_CACHE_.$file)) {
-      include_once(_CACHE_.$file);
-    }
-  }
-
-  closedir($dir);
 }
 
 if (defined("BROWSER")) {

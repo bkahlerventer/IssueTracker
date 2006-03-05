@@ -546,7 +546,7 @@ if (defined("BROWSER")) {
 	function generate_navigation_menus() {
 		$_ENV['menu'] = array();
 		$_ENV['menu']['Main'] = _URL_;
-		$includes = module_includes('menu');
+		$includes = Module::includes('menu');
 		foreach ($includes as $include) {
 			include_once($include);
 		}
