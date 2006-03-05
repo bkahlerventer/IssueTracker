@@ -99,7 +99,7 @@ or isset($_SESSION['userid'])) {
 
 	if (empty($_GET['module'])) {
 		if ($_SESSION['group_count'] > 0) {
-			$includes = module_includes('miniview');
+			$includes = Module::includes('miniview');
 			foreach ($includes as $inc) {
 				include($inc);
 			}

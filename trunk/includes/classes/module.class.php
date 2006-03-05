@@ -7,8 +7,7 @@
 */
 class Module {
 	/**
-	* Look for "install" hook and run that hook for the given module.  If the hook is run successfully
-	* or does not exist then the module is added to the modules table.
+	* Look for "install" hook and run that hook for the given module.
 	*
 	* @param string $module Module to be installed
 	* @return boolean
@@ -30,10 +29,6 @@ class Module {
 			} else {
 				logger::debug('Could not locate install module hook');
 			}
-			$insert['modules'] = $module;
-			$insert['installed'] = time();
-			$insert['version'] = !empty($version) ? trim($version) : 'N/A';
-			$_ENV['dbi']->insert('modules',$insert);
 			logger::system('Installed module '.$module.' successfully');
 			return TRUE;
 		} else {
@@ -43,8 +38,7 @@ class Module {
 	}
 
 	/**
-	* Look for "uninstall" hook and run that hook for the given module.  If the hook is run successfully
-	* or does not exist, then the module is removed from the modules table.
+	* Look for "uninstall" hook and run that hook for the given module.
 	*
 	* @param string $module Module to be removed
 	* @return boolean
@@ -61,7 +55,6 @@ class Module {
 					return FALSE;
 				}
 			}
-			$_ENV['dbi']->query("DELETE FROM modules where module='".$module."'");
 			return TRUE;
 		} else {
 			logmsg('Attempted to uninstall module which does not exist ('.$module.')');
@@ -85,7 +78,15 @@ class Module {
 	*/
 	function loadable_modules() {
 		if (empty($_ENV['lmodules'])) {
-			$_ENV['lmodules'] = $_ENV['dbi']->fetch_all("SELECT module FROM modules ORDER BY module");	
+			$_ENV['lmodules'] = array();
+			if ($dir = opendir($_ENV['module_path'])) {
+				while (($item = readdir($dir)) !== FALSE) {
+					if (is_dir($_ENV['module_path'].'/'.$item)) {
+						array_push($_ENV['lmodules'],$item);
+					}
+				}
+				closedir($dir);
+			} 
 		}
 	}
 
