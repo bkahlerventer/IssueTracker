@@ -48,13 +48,6 @@ if ($_GET['module'] == 'download' and !empty($_GET['fid'])) {
 	download($_GET['fid']);
 }
 
-if (isset($_SESSION['userid'])) {
-	if (file_exists(_PATH_.'/download/'.$_SESSION['userid'])
-	and $_GET['module'] != 'download') {
-		remove_dir(_PATH_.'/download/'.$_SESSION['userid']);
-	}
-}
-
 if (empty($_GET['issueid'])) {
 	if (!empty($_GET['tid'])) {
 		$_GET['issueid'] = $_GET['tid'];

@@ -1,27 +1,13 @@
 {if !empty($smarty.session.userid)}
 <!-- Begin javascript.tpl -->
 <script language="javascript" type="text/javascript">
-<!-- Begin javascript -->
-{if ($smarty.session.debugger eq "on" or $smarty.get.debug eq "on") 
-and $smarty.get.debug ne "off"}
-  debugwin = window.open('','DebugWin','toolbar=no,scrollbars=yes,resizable=yes,width=640,height=480');
-  debugwin.document.writeln('<html>');
-  debugwin.document.writeln('<head>');
-  debugwin.document.writeln('<title>Issue Tracker Debugger</title>');
-  debugwin.document.writeln('<link rel="stylesheet" type="text/css" href="css/{$cssfile}" />');
-  debugwin.document.writeln('</head>');
-  debugwin.document.writeln('<body>');
-  debugwin.document.writeln('<table width="100%" class="borders" border="0" cellspacing="0" cellpadding="2">');
-  debugwin.document.writeln('<tr><td class="tablehead">Debug Window</td></tr>');
-{/if}
 var timerID = null
 var timerRunning = false
 var sessionExpired = false
 var startDate
 var startSecs
 
-function loader()
-{ldelim}
+function loader() {ldelim}
   startDate = new Date()
   startSecs = (startDate.getHours() * 60 * 60) + (startDate.getMinutes() * 60) + startDate.getSeconds()
 
@@ -31,12 +17,7 @@ function loader()
   check_session()
 {rdelim}
 
-function unloader()
-{ldelim}
-{if ($smarty.session.debugger eq "on" or $smarty.get.debug eq "on")
-and $smarty.get.debug ne "off"}
-  debugwin.window.close();
-{/if}
+function unloader() {ldelim}
 {rdelim}
 
 function check_session()
@@ -67,7 +48,6 @@ if (d.getTimezoneOffset) {ldelim}
   document.cookie = "tz=" + (iMinutes / 60)
 {rdelim}
 {/if}
-<!-- End Javascript -->
 </script>
 <!-- End javascript.tpl -->
 {/if}
