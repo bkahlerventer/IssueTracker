@@ -259,15 +259,6 @@ function logger($message,$type)
 
   debug($message,ucwords(str_replace("_"," ",$type)));
 
-  /*
-  if ($dbi->get("link")) {
-    $insert['log_type']			= $type;
-    $insert['log_time']			= time();
-    $insert['log_message']	= $message;
-    $insert['log_user']			= $_SESSION['userid'];
-    $dbi->insert("logs",$insert);
-  } else {
-  */
     $date = "[".date_format()."]";
 
     if (!empty($_SESSION['userid'])) {
@@ -277,7 +268,6 @@ function logger($message,$type)
     $fp = fopen(_LOGS_."/".$type,"a+");
     fwrite($fp,"$date $user $message\n");
     fclose($fp);
-  //}
 }
 /* }}} */
 
