@@ -66,7 +66,7 @@ function it_error_handler($errno,$errstr,$errfile,$errline)
 		}
 	}
 
-	if ($dbi->get("link")) {
+	if ($dbi->link) {
 		logger($string,"phperrors");
 	} else {
     $date = "[".date_format()."]";
