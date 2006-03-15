@@ -1,61 +1,44 @@
 <?php
-/* $Id: render.func.php 3 2004-08-09 23:22:56Z eroberts $ */
-
 if (defined("BROWSER")) {
-  /* {{{ Register Modifiers and Functions */
-  // Register template modifiers
-  $smarty->register_modifier("number_format","template_number_format");
-  $smarty->register_modifier("format","template_text_format");
-  $smarty->register_modifier("userdate","template_date_format");
+	# Register template modifiers
+	$_ENV['tpl']->register_modifier('number_format','template_number_format');
+	$_ENV['tpl']->register_modifier('format','template_text_format');
+	$_ENV['tpl']->register_modifier('userdate','template_date_format');
 
-  // Register template functions
-  $smarty->register_function("opennavtable","template_opennavtable");
-  $smarty->register_function("closenavtable","template_closenavtable");
-  $smarty->register_function("opentable","template_opentable");
-  $smarty->register_function("closetable","template_closetable");
-  $smarty->register_function("titlebar","template_titlebar");
-  $smarty->register_function("username","template_username");
-  $smarty->register_function("groupname","template_group_name");
-  $smarty->register_function("rowcolor","template_rowcolor");
-  $smarty->register_function("alphalist","template_alpha_list");
-  $smarty->register_function("sevimg","template_severity_image");
-  $smarty->register_function("sevtxt","template_severity_text");
-  $smarty->register_function("category","template_category");
-  $smarty->register_function("product","template_product");
-  $smarty->register_function("status","template_status");
-  $smarty->register_function("fsize","template_fsize");
-  $smarty->register_function("subtitle","template_subtitle");
-  $smarty->register_function("date_select","template_date_select");
-  /* }}} */
+	# Register template functions
+	$_ENV['tpl']->register_function('opennavtable','template_opennavtable');
+	$_ENV['tpl']->register_function('closenavtable','template_closenavtable');
+	$_ENV['tpl']->register_function('opentable','template_opentable');
+	$_ENV['tpl']->register_function('closetable','template_closetable');
+	$_ENV['tpl']->register_function('titlebar','template_titlebar');
+	$_ENV['tpl']->register_function('username','template_username');
+	$_ENV['tpl']->register_function('groupname','template_group_name');
+	$_ENV['tpl']->register_function('rowcolor','template_rowcolor');
+	$_ENV['tpl']->register_function('alphalist','template_alpha_list');
+	$_ENV['tpl']->register_function('sevimg','template_severity_image');
+	$_ENV['tpl']->register_function('sevtxt','template_severity_text');
+	$_ENV['tpl']->register_function('category','template_category');
+	$_ENV['tpl']->register_function('product','template_product');
+	$_ENV['tpl']->register_function('status','template_status');
+	$_ENV['tpl']->register_function('fsize','template_fsize');
+	$_ENV['tpl']->register_function('subtitle','template_subtitle');
+	$_ENV['tpl']->register_function('date_select','template_date_select');
 
-  /* {{{ Function: template_number_format */
-  /**
-   * Format number string
-   */
-  function template_number_format($number,$decimal = 0)
-  {
-    return number_format($number,$decimal);
-  }
-  /* }}} */
+	/** Format number string */
+	function template_number_format($number,$decimal = 0) {
+		return number_format($number,$decimal);
+	}
 
-  /* {{{ Function: template_opennavtable */
-  /**
-   * Open navigation table
-   */
-  function template_opennavtable($params,&$smarty)
-  {
-    // Only show errors through nav if not logged in yet
-    if (!$_SESSION['userid']) {
-      if (count($_SESSION['errors']) > 0) {
-        $smarty->display("errors.tpl");
-      }
-    }
-  
-    $smarty->display("opennavtable.tpl");
-  }
-  /* }}} */
+	/** Open navigation table */
+	function template_opennavtable($params,&$smarty) {
+		if (!$_SESSION['userid']) {
+			if (count($_SESSION['errors']) > 0) {
+				$smarty->display("errors.tpl");
+			}
+		}
+		$smarty->display("opennavtable.tpl");
+	}
 
-  /* {{{ Function: template_closenavtable */
   /**
    * Close navigation table
    */
@@ -63,9 +46,7 @@ if (defined("BROWSER")) {
   {
     $smarty->display("closenavtable.tpl");
   }
-  /* }}} */
 
-  /* {{{ Function: template_opentable */
   /**
    * Open content table
    */
@@ -77,9 +58,7 @@ if (defined("BROWSER")) {
   
     $smarty->display("opentable.tpl");
   }
-  /* }}} */
 
-  /* {{{ Function: template_closetable */
   /**
    * Close content table
    */
@@ -87,9 +66,7 @@ if (defined("BROWSER")) {
   {
     $smarty->display("closetable.tpl");
   }
-  /* }}} */
 
-  /* {{{ Function: template_titlebar */
   /**
    * Create titlebar row and possible linkbar row
    *
@@ -124,9 +101,7 @@ if (defined("BROWSER")) {
 
     return $buffer;
   }
-  /* }}} */
 
-  /* {{{ Function: template_username */
   /**
    * Wrapper to username function for use in templates
    *
@@ -139,9 +114,7 @@ if (defined("BROWSER")) {
     $username = username($id);
     return $username;
   }
-  /* }}} */
 
-  /* {{{ Function: template_group_name */
   /**
    * Wrapper to group_name function for use in templates
    *
@@ -154,9 +127,7 @@ if (defined("BROWSER")) {
     $name = group_name($id);
     return $name;
   }
-  /* }}} */
 
-  /* {{{ Function: template_date_format */
   /**
    * Wrapper to date_format function for use in templates
    *
@@ -171,9 +142,7 @@ if (defined("BROWSER")) {
     }
     return $date;
   }
-  /* }}} */
 
-  /* {{{ Function: template_rowcolor */
   /**
    * Wrapper to rowcolor function for use in templates
    */
@@ -182,9 +151,7 @@ if (defined("BROWSER")) {
     $rowcolor = rowcolor();
     return $rowcolor;
   }
-  /* }}} */
 
-  /* {{{ Function: template_alpha_list */
   /**
    * Builds list of links to each letter
    *
@@ -224,9 +191,7 @@ if (defined("BROWSER")) {
 
     return $buffer;
   }
-  /* }}} */
 
-  /* {{{ Function: template_severity_image */
   /**
    * Wrapper to severity_image function for use in templates
    */
@@ -235,9 +200,7 @@ if (defined("BROWSER")) {
     extract($params);
     return severity_image($sev);
   }
-  /* }}} */
   
-  /* {{{ Function: template_severity_text */
   /**
    * Wrapper to severity_text function for use in templates
    */
@@ -246,9 +209,7 @@ if (defined("BROWSER")) {
     extract($params);
     return severity_text($sev);
   }
-  /* }}} */
 
-  /* {{{ Function: template_category */
   /**
    * Wrapper to category function for use in templates
    */
@@ -257,9 +218,7 @@ if (defined("BROWSER")) {
     extract($params);
     return category($id);
   }
-  /* }}} */
 
-  /* {{{ Function: template_product */
   /**
    * Wrapper to product function for use in templates
    */
@@ -268,9 +227,7 @@ if (defined("BROWSER")) {
     extract($params);
     return product($id);
   }
-  /* }}} */
 
-  /* {{{ Function: template_status */
   /**
    * Wrapper to status function for use in templates
    */
@@ -279,9 +236,7 @@ if (defined("BROWSER")) {
     extract($params);
     return status($id);
   }
-  /* }}} */
 
-  /* {{{ Function: template_text_format */
   /**
    * Format plain text for viewing in html
    *
@@ -322,9 +277,7 @@ if (defined("BROWSER")) {
     }
     return $text;
   }
-  /* }}} */
 
-  /* {{{ Function: template_fsize */
   /**
    * Wrapper to the fsize function for use in templates
    *
@@ -335,9 +288,7 @@ if (defined("BROWSER")) {
     extract($params);
     return fsize($id);
   }
-  /* }}} */
 
-  /* {{{ Function: template_subtitle */
   /**
    * Create subtitle bar
    *
@@ -351,9 +302,7 @@ if (defined("BROWSER")) {
     $buffer = "<tr><td class=\"subtitle\" colspan=\"$colspan\">$title</td></tr>";
     return $buffer;
   }
-  /* }}} */
 
-  /* {{{ Function: template_date_select */
   /**
    * Date selection field, uses javascript calendar if available
    *
@@ -371,9 +320,7 @@ if (defined("BROWSER")) {
     $buffer  = '<input type="text" size="12" maxlength="12" name="'.$name.'" value="'.$value.'" /> (Format: mm/dd/yyyy)';
     return $buffer;
   }
-  /* }}} */
 
-/* {{{ Function: severity_text */
   /**
    * Text for Severities
    *
@@ -391,9 +338,7 @@ if (defined("BROWSER")) {
 
     return $text;
   }
-  /* }}} */
 
-  /* {{{ Function: severity_image */
   /**
    * Image for severities
    *
@@ -411,9 +356,7 @@ if (defined("BROWSER")) {
 
     return $img;
   }
-  /* }}} */
 
-  /* {{{ Function: rowcolor */
   /**
    * Alternates table row classes
    * 
@@ -435,9 +378,7 @@ if (defined("BROWSER")) {
       return "row1";
     }
   }
-  /* }}} */
 
-  /* {{{ Function: build_crumbs */
   /**
    * Build breadcrumbs
    *
@@ -538,7 +479,6 @@ if (defined("BROWSER")) {
 
     return $crumbs;
   }
-  /* }}} */
 
 	/**
 	* Generate the menu array to be used for navigation

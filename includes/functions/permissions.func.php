@@ -1,388 +1,219 @@
 <?php
 /**
- * Determine if a user is an admin
- *
- * @param integer $userid
- * @returns boolean
- */
-function is_admin($userid = null)
-{
-  global $dbi;
+* Class for management and verification of permissions
+*
+* @author Edwin Robertson <tm@tuxmonkey.com>
+* @version 1.0
+*/
+class Permission {
+	/**
+	* Determine if a user is an admin
+	*
+	* @param integer $userid
+	* @returns boolean
+	*/
+	function is_admin($userid = null) {
+		$userid = empty($userid) ? $_SESSION['userid'] : $userid;
+		# Form query to get admin
+		$sql = "SELECT admin FROM users WHERE userid='$userid'";
+		# Fetch the result and cache it for 30 seconds
+		$admin = $_ENV['dbi']->fetch_one($sql,30);
+		$retval = $admin == 't' ? TRUE : FALSE;
+		return $retval;
+	}
 
-  if (!is_array($_ENV['admin'])) {
-    $_ENV['admin'] = array();
-  }
+	/**
+	* Determines whether or not the user is an employee
+	*
+	* @param integer $userid ID of user to check
+	* @returns boolean
+	*/
+	function is_employee($userid = null) {
+		$userid = empty($userid) ? $_SESSION['userid'] : $userid;
+		if (Permission::is_admin($userid)) {
+			return TRUE;
+		}
+		$sql = "SELECT userid FROM group_users 
+				WHERE userid='$userid' AND gid='"._EMPLOYEES_."'";
+		# Fetch the result and cache it for 30 seconds
+		$emp = $_ENV['dbi']->fetch_one($sql,30);
+		$retval = is_integer($emp) ? TRUE : FALSE;
+		return $retval;
+	}
 
-  if (empty($userid)) {
-    $userid = $_SESSION['userid'];
-  }
-  
-  if (array_key_exists($userid,$_ENV['admin'])) {
-    return $_ENV['admin'][$userid];
-  } else {
-    // form query to get admin
-    $sql  = "SELECT admin ";
-    $sql .= "FROM users ";
-    $sql .= "WHERE userid='$userid'";
-    $admin = $dbi->fetch_one($sql);
-    if ($admin == "t") {
-      $_ENV['admin'][$userid] = TRUE;
-      return TRUE;
-    }
+	/**
+	* Retrieve the permission set for a given user in a given group
+	*
+	* @param integer $gid ID of group to look in
+	* @param integer $userid ID of user to get permission set for
+	* @returns array
+	*/
+	function retrieve_set($gid,$userid = null) {
+		$pset = array();
+		$userid = empty($userid) ? $_SESSION['userid'] : $userid;
+		$sql = "SELECT p.permissions,g.perm_set FROM group_users g, permission_sets p 
+				WHERE g.userid='$userid' AND g.gid='$gid' AND g.perm_set = p.permsetid";
+		# Fetch the result and cache it for 60 seconds
+		$result = $_ENV['dbi']->query($sql,60);
+		if ($_ENV['dbi']->num_rows($result) > 0) {
+			list($pset,$id) = $_ENV['dbi']->fetch($result);
+			$pset = explode(',',stripslashes($pset));
+			if (!is_array($pset)) {
+				logger('Permission set '.$id.' returns none arrary.','permissions');
+				return;
+			}
+		}
+		return $pset;
+	}
 
-    $_ENV['admin'][$userid] = FALSE;
-    return FALSE;
-  }
-  
-  return FALSE;
-}
+	/**
+	* Retrieve the permission set id for a given user in a given group
+	*
+	* @param integer $gid ID of group to look in
+	* @param integer $userid ID of user to get permission set for
+	* @return integer
+	*/
+	function permission_set_id($gid,$userid = null) {
+		$userid = empty($userid) ? $_SESSION['userid'] : $userid;
+		$sql = "SELECT perm_set FROM group_users 
+				WHERE userid='$userid' AND gid='$gid'";
+		return $_ENV['dbi']->fetch_one($sql);
+	}
 
-/**
- * Determines whether or not the user is an employee
- *
- * @param integer $userid ID of user to check
- * @returns boolean
- */
-function is_employee($userid = null)
-{
-  global $dbi;
+	/**
+	* Retrieve the text of a permission
+	*
+	* @param integer $permid ID of permission
+	*/
+	function permission($permid) {
+		$sql = "SELECT permission FROM permissions WHERE permid='$permid'";
+		return $_ENV['dbi']->fetch_one($sql);
+	}
 
-  if (empty($userid)) {
-    $userid = $_SESSION['userid'];
-  }
+	/**
+	* Retrieve the permission set name for a permission set id
+	*
+	* @param integer $psetid ID of the permission set
+	* @return string
+	*/
+	function permission_set_name($psetid) {
+		$sql = "SELECT name FROM permission_sets WHERE permsetid='$psetid'";
+		return $_ENV['dbi']->fetch_one($sql);
+	}
 
-  if (is_admin($userid)) {
-    return TRUE;
-  }
+	/**
+	* Determine if a user has a certain permission
+	*
+	* @param string $priv Privilege to be checked
+	* @param integer $userid ID of user to check
+	* @param integer $gid ID of group to check
+	* @returns boolean
+	*/
+	function permission_check($perm,$gid = null,$userid = null) {
+		if (empty($userid)) {
+			$userid = $_SESSION['userid'];
+		}
+		if (Permission::is_admin($userid)) {
+			return TRUE;
+		}
+		$sql = "SELECT permid,group_perm,user_perm FROM permissions WHERE permission='$perm'";
+		$data = $_ENV['dbi']->fetch_row($sql,'array');
+		if ($data['user_perm'] == 't') {
+			$sql = "SELECT userid FROM user_permissions 
+					WHERE userid='$userid' AND permid='{$data['permid']}'";
+			$id = $_ENV['dbi']->fetch_one($sql);
+			if (is_integer($id)) {
+				return TRUE;
+			}
+		} elseif ($data['group_perm'] == 't') {
+			$user_groups = $userid == $_SESSION['userid'] ? $_SESSION['groups'] : user_groups($userid);
+			foreach ($user_groups as $key => $val) {
+				$sql = "SELECT permid FROM group_permissions 
+						WHERE permid='{$data['permid']}' AND gid='$val'";
+				$id = $_ENV['dbi']->fetch_one($sql);
+				if (is_integer($id)) {
+					return TRUE;
+				}
+			}
+		}
+		if (!is_null($gid)) {
+			$pset = Permission::retrieve_set($gid,$userid);
+			if (in_array($perm,$pset)) {
+				return TRUE;
+			}
+		} else {
+			foreach ($_SESSION['groups'] as $key => $val) {
+				$pset = Permission::retrieve_set($val,$userid);
+				if (in_array($perm,$pset)) {
+					return TRUE;
+				}
+			}
+		}
+		return FALSE;
+	}
 
-  $sql  = "SELECT userid ";
-  $sql .= "FROM group_users ";
-  $sql .= "WHERE userid='$userid' ";
-  $sql .= "AND gid='"._EMPLOYEES_."'";
-  $emp = $dbi->fetch_one($sql);
-  if (!is_null($emp)) {
-    return TRUE;
-  } 
+	/**
+	* Attempt to authenticate a user
+	*
+	* @param string $username Username of user
+	* @param string $password Password of user
+	* @return boolean|integer
+	*/
+	function authenticate($username,$password) {
+		$sql = "SELECT username,userid FROM users 
+				WHERE LOWER(username)=LOWER('".addslashes($username)."') 
+				AND password='".md5($password)."' AND active='t'";
+		$data = $_ENV['dbi']->fetch_row($sql,'array');
+		if (is_integer($data['userid'])) {
+			# If we're calling the authentication function from
+			# the browser then make sure to define the needed
+			# session variables, and then redirect to the user
+			if (defined('BROWSER')) {
+				$_SESSION['userid'] = $data['userid'];
+				$_SESSION['javascript'] = $_POST['javascript'] == 'enabled' ? 't' : 'f';
+				$_SESSION['ip'] = $_SERVER['REMOTE_ADDR'];
+				$_SESSION['prefs'] = user_preferences($_SESSION['userid']);
+				$_SESSION['prefs']['show_fields'] = empty($_SESSION['prefs']['show_fields'])
+					? array() : explode(',',$_SESSION['prefs']['show_fields']);
+				$_SESSION['prefs']['sort_by'] = empty($_SESSION['prefs']['sort_by'])
+					? 'issueid' : $_SESSION['prefs']['sort_by'];
+				$_SESSION['prefs']['word_wrap'] = !is_integer($_SESSION['prefs']['word_wrap'])
+					? 80 : $_SESSION['prefs']['word_wrap'];
+				logger("$username logged in.",'logins');
+				if (!empty($_POST['request'])) {
+					redirect('/?'.$_POST['request']);
+				} else {
+					redirect();	
+				}
+			} else {
+				# If we're not calling authentication from the browser 
+				# then just return the retrieved userid
+				return $uid;
+			}
+		} else {
+			# If we didnt pull a userid then just return error message
+			# for the browser and FALSE if not
+			if (defined('BROWSER')) {
+				push_error('Invalid login and/or password.');
+			} else {
+				return FALSE;
+			}
+		}
+	}
 
-  return FALSE;
-}
-
-/**
- * Determine if a user is a manager
- *
- * @param integer $userid ID of user to check
- * @returns boolean
- */
-function is_manager($userid = null)
-{
-  global $dbi;
-
-  if (empty($userid)) {
-    $userid = $_SESSION['userid'];
-  }
-
-  if (is_admin($userid)) {
-    return TRUE;
-  }
-
-  if (is_employee($userid)
-  and permission_check("update_group",_EMPLOYEES_,$userid)) {
-    return TRUE;
-  }
-
-  return FALSE;
-}
-
-/**
- * Retrieve the permission set for a given user in a given group
- *
- * @param integer $gid ID of group to look in
- * @param integer $userid ID of user to get permission set for
- * @returns array
- */
-function permission_set($gid,$userid = null)
-{
-  global $dbi;
-
-  $pset = array();
-
-  if (empty($userid)) {
-    $userid = $_SESSION['userid'];
-  }
-
-  $sql  = "SELECT p.permissions,g.perm_set ";
-  $sql .= "FROM group_users g, permission_sets p ";
-  $sql .= "WHERE g.userid='$userid' ";
-  $sql .= "AND g.gid='$gid' ";
-  $sql .= "AND g.perm_set = p.permsetid";
-  $result = $dbi->query($sql);
-  if ($dbi->num_rows($result) > 0) {
-    list($pset,$id) = $dbi->fetch($result);
-    $pset = explode(",",stripslashes($pset));
-
-    if (!is_array($pset)) {
-      logger("Permission set $id returns none arrary.","permissions");
-      return;
-    }
-  }
-
-  return $pset;
-}
-
-/**
- * Retrieve the permission set id for a given user in a given group
- *
- * @param integer $gid ID of group to look in
- * @param integer $userid ID of user to get permission set for
- * @return integer
- */
-function permission_set_id($gid,$userid = null)
-{
-  global $dbi;
-
-  if (empty($userid)) {
-    $userid = $_SESSION['userid'];
-  }
-
-  $sql  = "SELECT perm_set ";
-  $sql .= "FROM group_users ";
-  $sql .= "WHERE userid='$userid' ";
-  $sql .= "AND gid='$gid'";
-  $result = $dbi->query($sql);
-  if ($dbi->num_rows($result) > 0) {
-    list($id) = $dbi->fetch($result);
-
-    return $id;
-  }
-
-  return;
-}
-
-/**
- * Retrieve the text of a permission
- *
- * @param integer $permid ID of permission
- */
-function permission($permid)
-{
-  global $dbi;
-
-  $sql  = "SELECT permission ";
-  $sql .= "FROM permissions ";
-  $sql .= "WHERE permid='$permid'";
-  $result = $dbi->query($sql);
-  if ($dbi->num_rows($result) > 0) {
-    list($permission) = $dbi->fetch($result);
-    return $permission;
-  }
-
-  return "UNKNOWN";
-}
-
-/**
- * Retrieve the permission set name for a permission set id
- *
- * @param integer $psetid ID of the permission set
- * @return string
- */
-function permission_set_name($psetid)
-{
-  global $dbi;
-
-  $sql  = "SELECT name ";
-  $sql .= "FROM permission_sets ";
-  $sql .= "WHERE permsetid='$psetid'";
-  $result = $dbi->query($sql);
-  if ($dbi->num_rows($result) > 0) {
-    list($name) = $dbi->fetch($result);
-
-    return $name;
-  }
-
-  return;
-}
-
-/**
- * Determine if a user has a certain permission
- *
- * @param string $priv Privilege to be checked
- * @param integer $userid ID of user to check
- * @param integer $gid ID of group to check
- * @returns boolean
- */
-function permission_check($perm,$gid = null,$userid = null)
-{
-  global $dbi;
-
-  if (empty($userid)) {
-    $userid = $_SESSION['userid'];
-  }
-
-  if(is_admin($userid)){
-    return TRUE;
-  }
-
-  $sql  = "SELECT permid,group_perm,user_perm ";
-  $sql .= "FROM permissions ";
-  $sql .= "WHERE permission='$perm'";
-  $result = $dbi->query($sql);
-  if ($dbi->num_rows($result) > 0) {
-    list($permid,$group,$user) = $dbi->fetch($result);
-    $dbi->free($result);
-  } else {
-    logger("Lookup against unknown permission ($perm).","permissions");
-    return FALSE;
-  }
-
-  if ($user == "t") {
-    $sql  = "SELECT userid ";
-    $sql .= "FROM user_permissions ";
-    $sql .= "WHERE userid='$userid' ";
-    $sql .= "AND permid='$permid'";
-    $result = $dbi->query($sql);
-    if ($dbi->num_rows($result) > 0) {
-      $dbi->free($result);
-      return TRUE;
-    }
-  }
-
-  if ($group == "t") {
-    if ($userid == $_SESSION['userid']) {
-      $user_groups = $_SESSION['groups'];
-    } else {
-      $user_groups = user_groups($userid);
-    }
-
-    foreach ($user_groups as $key => $val) {
-      $sql  = "SELECT permid ";
-      $sql .= "FROM group_permissions ";
-      $sql .= "WHERE permid='$permid' ";
-      $sql .= "AND gid='$val'";
-      $result = $dbi->query($sql);
-      if ($dbi->num_rows($result) > 0) {
-        $dbi->free($result);
-        return TRUE;
-      }
-    }
-
-    return FALSE;
-  }
-
-  if (!is_null($gid)) {
-    $pset = permission_set($gid,$userid);
-    
-    if (in_array($perm,$pset)) {
-      return TRUE;
-    }
-  } else {
-    foreach ($_SESSION['groups'] as $key => $val) {
-      $pset = permission_set($val,$userid);
-
-      if (in_array($perm,$pset)) {
-        return TRUE;
-      }
-    }
-  }
-
-  return FALSE;
-}
-
-/**
- * Attempt to authenticate a user
- *
- * @param string $username Username of user
- * @param string $password Password of user
- * @return boolean|integer
- */
-function authenticate($username,$password)
-{
-  global $dbi;
-
-  // The login actuall allows users to login by
-  // their username or email address, both of
-  // which should be unique to each user
-  // so now we have to determine which one we're
-  // looking up
-  $field = ereg("@",$username) ? "email" : "username";
-
-  $sql  = "SELECT username,userid,theme ";
-  $sql .= "FROM users ";
-  $sql .= "WHERE LOWER($field)=LOWER('".addslashes($username)."') ";
-  $sql .= "AND password='".md5($password)."' ";
-  $sql .= "AND active='t'";
-  $result = $dbi->query($sql);
-  if($dbi->num_rows($result) > 0){
-    list($username,$uid,$theme) = $dbi->fetch($result);
-
-    // If we're calling the authentication function from
-    // the browser then make sure to define the needed
-    // session variables, and then redirect to the user
-    if (defined("BROWSER")) {
-      $_SESSION['userid'] = $uid;
-      $_SESSION['javascript'] = $_POST['javascript'] == "enabled" ? "t" : "f";
-      $_SESSION['ip'] = $_SERVER['REMOTE_ADDR'];
-      $_SESSION['theme'] = !empty($theme) ? $theme : $_SESSION['theme'];
-      $_SESSION['prefs'] = user_preferences($uid);
-
-      if (empty($_SESSION['prefs']['show_fields'])) {
-        $_SESSION['prefs']['show_fields'] = array();
-      } else {
-        $_SESSION['prefs']['show_fields'] = explode(",",$_SESSION['prefs']['show_fields']);
-      }
-      if (empty($_SESSION['prefs']['sort_by'])) {
-        $_SESSION['prefs']['sort_by'] = "issueid";
-      }
-      if (empty($_SESSION['prefs']['word_wrap'])) {
-        $_SESSION['prefs']['word_wrap'] = 80;
-      }
-
-      logger("$username logged in.","logins");
-
-      if (!empty($_POST['request'])) {
-        redirect("/?".$_POST['request']);
-      } else {
-        redirect();	
-      }
-    } else {
-      // If we're not calling authentication
-      // from the browser then just return
-      // the retrieved userid
-      return $uid;
-    }
-  } else {
-    // If we didnt pull a userid then just return error message
-    // for the browser and FALSE if not
-    if (defined("BROWSER")) {
-      push_error("Invalid login and/or password.");
-    } else {
-      return FALSE;
-    }
-  }
-}
-
-/**
- * Determine if a permission is a group permission
- *
- * @param integer $permid ID of permission
- * @return boolean
- */
-function group_permission($permid)
-{
-  global $dbi;
-
-  $sql  = "SELECT group_perm ";
-  $sql .= "FROM permissions ";
-  $sql .= "WHERE permid='$permid'";
-  $result = $dbi->query($sql);
-  if ($dbi->num_rows($result) > 0) {
-    list($group) = $dbi->fetch($result);
-    $dbi->free($result);
-    
-    if ($group == "t") {
-      return TRUE;
-    }
-  }
-
-  return FALSE;
+	/**
+	* Determine if a permission is a group permission
+	*
+	* @param integer $permid ID of permission
+	* @return boolean
+	*/
+	function group_permission($permid) {
+		$sql = "SELECT group_perm FROM permissions WHERE permid='$permid'";
+		$gperm = $_ENV['dbi']->fetch_one($sql);
+		if ($gperm == 't') {
+			return TRUE;
+		}
+		return FALSE;
+	}
 }
 ?>
