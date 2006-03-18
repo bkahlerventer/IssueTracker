@@ -10,9 +10,9 @@ require_once('initialize.php');
 
 if ($_GET['expired'] == 'true') {
 	session_destroy();
-	$smarty->display('header.tpl');
-	$smarty->display('expired.tpl');
-	$smarty->display('footer.tpl');
+	$_ENV['tpl']->display('header.tpl');
+	$_ENV['tpl']->display('expired.tpl');
+	$_ENV['tpl']->display('footer.tpl');
 	ob_flush();
 	exit;
 }
@@ -35,7 +35,7 @@ if ($_GET['logout'] == 'true') {
 }
 
 if (!empty($_POST['username']) and !empty($_POST['password'])) {
-	authenticate($_POST['username'],$_POST['password']);
+	Permission::authenticate($_POST['username'],$_POST['password']);
 }
 
 if (isset($_SESSION['userid'])) {
@@ -57,7 +57,7 @@ if (empty($_GET['issueid'])) {
 	}
 }
 
-$smarty->display('header.tpl');
+$_ENV['tpl']->display('header.tpl');
 
 if ((isset($_GET['module']) and file_exists(_MODULES_.$_GET['module'].'/noauth'))
 or isset($_SESSION['userid'])) {
@@ -71,23 +71,23 @@ or isset($_SESSION['userid'])) {
 
 	if (empty($_GET['nonav'])) {
 		generate_navigation_menus();
-		$smarty->display("leftnav.tpl");
+		$_ENV['tpl']->display("leftnav.tpl");
 	}
 
 	if ($_GET['module'] != 'help' and !empty($_GET['module'])) {
 		if (empty($_GET['action'])) {
 			if (file_exists(_HELP_.$_GET['module'].'.hlp')) {
-				$smarty->assign('help_file',_HELP_.$_GET['module'].'.hlp');
+				$_ENV['tpl']->assign('help_file',_HELP_.$_GET['module'].'.hlp');
 			}
 		} else {
 			if (file_exists(_HELP_.$_GET['module']."/".$_GET['action'].'.hlp')) {
-				$smarty->assign('help_file',_HELP_.$_GET['module'].'/'.$_GET['action'].'.hlp');
+				$_ENV['tpl']->assign('help_file',_HELP_.$_GET['module'].'/'.$_GET['action'].'.hlp');
 			}
 		}
 	}
 
 	if ($_GET['module'] != 'help') {
-		$smarty->display('iconbar.tpl');
+		$_ENV['tpl']->display('iconbar.tpl');
 	}
 
 	if (empty($_GET['module'])) {
@@ -98,7 +98,7 @@ or isset($_SESSION['userid'])) {
 			}
 		} else {
 			push_error('Your user does not belong to any groups within this system.  Please contact '._ADMINEMAIL_.' to correct this.');
-			$smarty->display('errors.tpl');
+			$_ENV['tpl']->display('errors.tpl');
 		}
 	} else {
 		if ($_GET['module'] == 'help') {
@@ -113,8 +113,8 @@ or isset($_SESSION['userid'])) {
 			} else {
 				$buffer = 'Could not find a help file for requested module/action.';
 			}
-			$smarty->assign('help',$buffer);
-			$smarty->display('help.tpl');
+			$_ENV['tpl']->assign('help',$buffer);
+			$_ENV['tpl']->display('help.tpl');
 		} else {
 			if (empty($_GET['action'])) {
 				if (file_exists(_MODULES_.$_GET['module'].'/'.$_GET['module'].'.php')) {
@@ -130,12 +130,12 @@ or isset($_SESSION['userid'])) {
 } else {
 	if ($fp = fopen(_INCLUDES_.'motd','r')) {
 		$motd = fread($fp,filesize(_INCLUDES_.'motd'));
-		$smarty->assign('motd',$motd);
+		$_ENV['tpl']->assign('motd',$motd);
 		fclose($fp);
 	}
-	$smarty->assign('allow_register',$allow_register);
-	$smarty->display('login.tpl');
+	$_ENV['tpl']->assign('allow_register',$allow_register);
+	$_ENV['tpl']->display('login.tpl');
 }
-$smarty->display('footer.tpl');
+$_ENV['tpl']->display('footer.tpl');
 ob_end_flush();
 ?>

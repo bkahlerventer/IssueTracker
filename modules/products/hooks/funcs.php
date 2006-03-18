@@ -6,8 +6,7 @@
 */
 function product_list() {
 	$sql = "SELECT pid,product FROM products ORDER BY product";
-	$products = $_ENV['dbi']->fetch_all($sql,'array');
-	return $products;
+	return $_ENV['dbi']->fetch_all($sql,'array');
 }
 
 /**
@@ -20,7 +19,10 @@ function product_exists($product) {
 	$sql = "SELECT pid FROM products 
 			WHERE LOWER(product) = LOWER('".trim($product)."')";
 	$pid = $_ENV['dbi']->fetch_one($sql);
-	return is_numeric($pid);
+	if (preg_match('/^[0-9]+$/',$pid)) {
+		return TRUE;
+	}
+	return FALSE;
 }
 
 /**
@@ -35,8 +37,7 @@ function product_create($product,$categories = array()) {
 	if (@count($categories) > 0) {
 		$insert['categories'] = join(',',$categories);
 	}
-	$id = $_ENV['dbi']->insert('products',$insert,1);
-	return $id;
+	return $_ENV['dbi']->insert('products',$insert,1);
 }
 
 /**
@@ -46,7 +47,7 @@ function product_create($product,$categories = array()) {
 * @return boolean
 */
 function product_delete($product_id) {
-	if (is_numeric($product_id)) {
+	if (preg_match('/^[0-9]+$/',$product_id)) {
 		$_ENV['dbi']->query("DELETE FROM products WHERE pid='".$product_id."'");
 		return TRUE;
 	}
@@ -86,8 +87,7 @@ function product_update($product_id,$fields) {
 */
 function product_categories($product_id) {
 	if (is_numeric($product_id)) {
-		$sql = "SELECT categories FROM products 
-				WHERE pid='".$product_id."'";
+		$sql = "SELECT categories FROM products WHERE pid='".$product_id."'";
 		$list = $_ENV['dbi']->fetch_one($sql);
 		$categories = explode(',',$list);
 		return $categories;

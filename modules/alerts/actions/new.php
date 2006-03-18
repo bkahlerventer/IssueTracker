@@ -1,15 +1,6 @@
 <?php
-/* $Id: new.announce.php 2 2004-08-05 21:42:03Z eroberts $ */
-/**
-* @package Issue-Tracker
-* @subpackage Alerts
-*/
-if (preg_match('/'.basename(__FILE__).'/',$_SERVER['PHP_SELF'])) {
-	print('Direct module access forbidden.');
-	exit;
-}
-
-if (!permission_check('create_alerts')) {
+Module::check();
+if (!Permission::check('create_alerts')) {
 	redirect('?module=alerts');
 }
 if (!empty($_POST['new_title'])) {
@@ -26,13 +17,13 @@ if (!empty($_POST['new_title'])) {
 		$insert['is_global']  = in_array('GLOBAL',$_POST['groups']) ? 't' : 'f';
 		$insert['posted']     = time();
 		$insert['userid']     = $_SESSION['userid'];
-		if ($aid = $dbi->insert('alerts',$insert,'alerts_aid_seq')) {
+		if ($aid = $_ENV['dbi']->insert('alerts',$insert,'alerts_aid_seq')) {
 			unset($insert);
 			if (!in_array('GLOBAL',$_POST['groups']) and count($_POST['groups']) > 0) {
 				for ($x = 0;$x < count($_POST['groups']);$x++) {
 					$insert['aid'] = $aid;
 					$insert['gid'] = $_POST['groups'][$x];
-					$dbi->insert('alert_permissions',$insert);
+					$_ENV['dbi']->insert('alert_permissions',$insert);
 					unset($insert);
 				}
 			}
@@ -40,5 +31,5 @@ if (!empty($_POST['new_title'])) {
 		redirect('?module=alerts');
 	}
 }
-$smarty->display('alerts/new.tpl');
+Module::template('alerts','new.tpl');
 ?>

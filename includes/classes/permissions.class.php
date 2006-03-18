@@ -37,7 +37,7 @@ class Permission {
 				WHERE userid='$userid' AND gid='"._EMPLOYEES_."'";
 		# Fetch the result and cache it for 30 seconds
 		$emp = $_ENV['dbi']->fetch_one($sql,30);
-		$retval = is_integer($emp) ? TRUE : FALSE;
+		$retval = preg_match('/^[0-9]+$/',$emp) ? TRUE : FALSE;
 		return $retval;
 	}
 
@@ -122,7 +122,7 @@ class Permission {
 			$sql = "SELECT userid FROM user_permissions 
 					WHERE userid='$userid' AND permid='{$data['permid']}'";
 			$id = $_ENV['dbi']->fetch_one($sql);
-			if (is_integer($id)) {
+			if (preg_match('/^[0-9]+$/',$id)) {
 				return TRUE;
 			}
 		} elseif ($data['group_perm'] == 't') {
@@ -131,7 +131,7 @@ class Permission {
 				$sql = "SELECT permid FROM group_permissions 
 						WHERE permid='{$data['permid']}' AND gid='$val'";
 				$id = $_ENV['dbi']->fetch_one($sql);
-				if (is_integer($id)) {
+				if (preg_match('/^[0-9]+$/',$id)) {
 					return TRUE;
 				}
 			}
@@ -164,7 +164,7 @@ class Permission {
 				WHERE LOWER(username)=LOWER('".addslashes($username)."') 
 				AND password='".md5($password)."' AND active='t'";
 		$data = $_ENV['dbi']->fetch_row($sql,'array');
-		if (is_integer($data['userid'])) {
+		if (preg_match('/^[0-9]+$/',$data['userid'])) {
 			# If we're calling the authentication function from
 			# the browser then make sure to define the needed
 			# session variables, and then redirect to the user
@@ -177,7 +177,7 @@ class Permission {
 					? array() : explode(',',$_SESSION['prefs']['show_fields']);
 				$_SESSION['prefs']['sort_by'] = empty($_SESSION['prefs']['sort_by'])
 					? 'issueid' : $_SESSION['prefs']['sort_by'];
-				$_SESSION['prefs']['word_wrap'] = !is_integer($_SESSION['prefs']['word_wrap'])
+				$_SESSION['prefs']['word_wrap'] = !preg_match('/^[0-9+$/',$_SESSION['prefs']['word_wrap'])
 					? 80 : $_SESSION['prefs']['word_wrap'];
 				logger("$username logged in.",'logins');
 				if (!empty($_POST['request'])) {
@@ -188,7 +188,7 @@ class Permission {
 			} else {
 				# If we're not calling authentication from the browser 
 				# then just return the retrieved userid
-				return $uid;
+				return $data['userid'];
 			}
 		} else {
 			# If we didnt pull a userid then just return error message

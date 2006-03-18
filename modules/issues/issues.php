@@ -1,19 +1,9 @@
 <?php
-/* $Id: issues.php 2 2004-08-05 21:42:03Z eroberts $ */
-/**
- * @package Issue-Tracker
- * @subpackage Issues
- */
-
-if (eregi(basename(__FILE__),$_SERVER['PHP_SELF'])) {
-  print "Direct module access forbidden.";
-	exit;
-}
-
+Module::check();
 // if the user belongs to multiple groups make them select
 // which groups issues they want to view
-if($_SESSION['group_count'] > 1 or is_manager()){
-	redirect("?module=issues&action=choose");
+if ($_SESSION['group_count'] > 1 or Permission::is_manager()) {
+	redirect('?module=issues&action=choose');
 } else {
 	// otherwise assign gid as the only group and include
 	// the group issues file

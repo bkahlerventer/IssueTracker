@@ -13,7 +13,7 @@
 */
 if (ini_get('register_globals') == 1) {
 	print('Please turn off register_globals in your php.ini ');
-	print('or make sure your webserver is setup to obey .htaccess files.'."\n";
+	print('or make sure your webserver is setup to obey .htaccess files.'."\n");
 	exit;
 }
 
@@ -30,6 +30,7 @@ if (!defined('_PATH_')) {
 require_once(_PATH_.'/conf/config.php');
 require_once(_CLASSES_.'dbi.class.php');
 require_once(_CLASSES_.'module.class.php');
+require_once(_CLASSES_.'permissions.class.php');
 include_once(SMARTY_DIR.'Smarty.class.php');
 
 // If the logs directory is not writable, quit now
@@ -83,7 +84,7 @@ if (defined('BROWSER')) {
 
 # Load all functions file located in _FUNCTIONS_
 $files = glob(_FUNCTIONS_.'/*.func.php');
-foreach ($files as as $file) {
+foreach ($files as $file) {
 	include_once($file);
 }
 
@@ -107,7 +108,6 @@ if (defined('BROWSER')) {
 	$title .= !empty($_GET['issueid']) ? " :: ".$_GET['issueid'] : "";
 	$_ENV['tpl']->assign('title',$title);
 	$_ENV['tpl']->assign('crumbs',build_crumbs());
-	$_ENV['tpl']->assign('cssfile',cssfile());
 }
 
 // Dont display any errors, just log them in the logs directory

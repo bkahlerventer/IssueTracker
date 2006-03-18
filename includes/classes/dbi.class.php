@@ -464,7 +464,7 @@ class DBI {
 	*/
 	function update($table,$data,$condition = null) {
 		foreach ($data as $key => $val) {
-			$values .= !empty($values) ? "," : "";
+			$values .= !empty($values) ? ',' : '';
 			$values .= $key.'='.(trim($val) != '' ? "'".addslashes($val)."'" : "NULL");
 		}
 		$sql = "UPDATE $table SET $values $condition";
