@@ -1,3 +1,5 @@
-img {
-  behavior: url('themes/default/pngbehavior.htc');
-}
+img {behavior:url('themes/default/pngbehavior.htc');}
+fieldset {padding:1em;margin-top:1em;}
+legend {padding:0.3em;}
+* html fieldset {position:relative;padding-top:2.5em;}
+* html legend {position:absolute;top:-0.9em;left:0;}

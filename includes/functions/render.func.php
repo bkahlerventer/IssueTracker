@@ -486,7 +486,7 @@ if (defined("BROWSER")) {
 	function generate_navigation_menus() {
 		$_ENV['menu'] = array();
 		$_ENV['menu']['Main'] = _URL_;
-		Module::includes('menu');
+		Module::includes('menus');
 		$_ENV['menu']['Logout'] = '?logout=true';
 	}
 }

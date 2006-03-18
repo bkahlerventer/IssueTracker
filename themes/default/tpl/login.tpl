@@ -1,6 +1,4 @@
 <!-- Begin login.tpl -->
-<td width="20%">
-<br />
 {if is_array($smarty.session.errors)}
 {if count($smarty.session.errors) > 0}
 {include file="errors.tpl"}
@@ -51,41 +49,27 @@
 </td>
 <td width="80%" style="margin: 4px; padding: 4px;"><br />{$motd}</td>
 {else}
-<form method="post" name="loginForm" action="{$smarty.const._URL_}">
-<input type="hidden" name="request" value="{$smarty.server.QUERY_STRING}" />
-<!-- Check if Javascript is enabled -->
-<script language="JavaScript" type="text/javascript">
-document.write('<input type="hidden" name="javascript" value="enabled">');
-</script>
-<table width="98%" border="0" align="center" cellpadding="2" cellspacing="0" class="login">
-<tr>
-<td colspan="2" class="titlebar" style="border-bottom: 1px solid black;">Issue Tracker Login</td>
-</tr>
-<tr>
-<td width="60%" align="right">Username:</td>
-<td width="40%"><input type="text" size="16" name="username" /></td>
-</tr>
-<tr>
-<td width="60%" align="right">Password:</td>
-<td width="40%"><input type="password" size="16" name="password" /></td>
-</tr>
-<tr>
-<td colspan="2" align="center"><input type="submit" value="Login"/></td>
-</tr>
-<tr>
-<td colspan="2" align="center">
-<br />
+		<div id="login">
+			<form method="post" name="loginForm" action="{$smarty.const._URL_}">
+				<input type="hidden" name="request" value="{$smarty.server.QUERY_STRING}" />
+				<script language="JavaScript" type="text/javascript">
+					document.write('<input type="hidden" name="javascript" value="enabled">');
+				</script>
+				<fieldset>
+					<legend>Issue-Tracker Login</legend>
+					<label for="username">Username:</label> <input type="text" size="16" name="username" /><br />
+					<label for="password">Password:</label> <input type="password" size="16" name="password" /><br />
+					<input type="submit" value="Login" />
+					<div align="center">
 {if $allow_register eq TRUE}
-<a href="?register=true">Register New Account</a><br />
+						<a href="?register=true">Register</a><br />
 {/if}
-<a href="?forgotten_password=true">Forgot your password? Click Here.</a>
-</td>
-</tr>
-</table>
-</form>
-<br />
-</td>
-<td width="80%" style="margin: 4px; padding; 4px;"><br />{$motd}</td>
+						<a href="?forgotten_password=true">Forgot your password?</a>
+					</div>
+				</fieldset>
+			</form>
+		</div>
+		<div id="content">{$motd}</div>
 {/if}
 <!-- End login.tpl -->
 

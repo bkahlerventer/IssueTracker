@@ -71,7 +71,7 @@ or isset($_SESSION['userid'])) {
 
 	if (empty($_GET['nonav'])) {
 		generate_navigation_menus();
-		$_ENV['tpl']->display("leftnav.tpl");
+		$_ENV['tpl']->display('leftnav.tpl');
 	}
 
 	if ($_GET['module'] != 'help' and !empty($_GET['module'])) {
@@ -84,10 +84,6 @@ or isset($_SESSION['userid'])) {
 				$_ENV['tpl']->assign('help_file',_HELP_.$_GET['module'].'/'.$_GET['action'].'.hlp');
 			}
 		}
-	}
-
-	if ($_GET['module'] != 'help') {
-		$_ENV['tpl']->display('iconbar.tpl');
 	}
 
 	if (empty($_GET['module'])) {
@@ -138,4 +134,5 @@ or isset($_SESSION['userid'])) {
 }
 $_ENV['tpl']->display('footer.tpl');
 ob_end_flush();
+print_r($_ENV['menu']);
 ?>

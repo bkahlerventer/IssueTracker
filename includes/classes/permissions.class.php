@@ -109,7 +109,7 @@ class Permission {
 	* @param integer $gid ID of group to check
 	* @returns boolean
 	*/
-	function permission_check($perm,$gid = null,$userid = null) {
+	function check($perm,$gid = null,$userid = null) {
 		if (empty($userid)) {
 			$userid = $_SESSION['userid'];
 		}
