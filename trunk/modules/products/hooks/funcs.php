@@ -1,5 +1,15 @@
 <?php
 /**
+* Retrieve the product name of the given product id
+*
+* @param integer $product_id Id of product to retrieve
+* @return string
+*/
+function product($product_id) {
+	return $_ENV['dbi']->getfield('products','product','pid',$product_id);
+}
+
+/**
 * Retrieve a list of all products
 *
 * @return array
