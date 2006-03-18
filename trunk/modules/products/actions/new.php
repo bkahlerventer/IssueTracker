@@ -1,9 +1,6 @@
 <?php
-/**
-* Create a new product
-*/
-module_check();
-if (permission_check('product_manager')) {
+Module::check();
+if (Permission::check('product_manager')) {
 	if ($_POST['commit'] == 'true') {
 		if (empty($_POST['product'])) {
 			push_error('Please enter a valid name for the product.');
@@ -16,7 +13,7 @@ if (permission_check('product_manager')) {
 			}
 		}
 	}
-	module_template('products','new.tpl');
+	Module::template('products','new.tpl');
 } else {
 	redirect();
 }

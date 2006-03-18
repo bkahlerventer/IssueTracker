@@ -117,5 +117,21 @@ class Module {
 			}
 		}
 	}
+
+	/**
+	* Display the requested module template
+	*
+	* @param string $module Module to look for the template in
+	* @param string $template Template to display
+	*/
+	function template($module,$template) {
+		if (preg_match('/\.\.\//',$template) or preg_match('/\.\.\//',$module)) {
+			return FALSE;
+		}
+		$filename = dirname(__FILE__).'/../../modules/'.$module.'/tpl/'.$template;
+		if (file_exists($filename)) {
+			$_ENV['tpl']->display('file://'.$filename);
+		}
+	}
 }		
 ?>

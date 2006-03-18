@@ -1,14 +1,5 @@
 <?php
-/* $Id: menus.php 2 2004-08-05 21:42:03Z eroberts $ */
-/**
-* @package Issue-Tracker
-* @subpackage Issues
-*/
-if (preg_match('/'.basename(__FILE__).'/',$_SERVER['PHP_SELF'])) {
-	print('Direct module access forbidden.');
-	exit;
-}
-
+Module::check();
 if ($_SESSION['group_count'] > 0) {
 	$_ENV['menu']['Issues'] = array(
 		'url' => '?module=issues',

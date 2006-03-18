@@ -10,7 +10,7 @@
 <link rel="stylesheet" type="text/css" href="css/print.css" />
 {else}
 <link rel="stylesheet" type="text/css" media="print" href="css/print.css" />
-<link rel="stylesheet" type="text/css" media="screen" href="css/{$cssfile}" />
+<link rel="stylesheet" type="text/css" media="screen" href="themes/default/screen.css" />
 {/if}
 {include file="javascript.tpl"}
 </head>

@@ -1,40 +1,29 @@
 <?php
-/* $Id: edit_motd.admin.php 2 2004-08-05 21:42:03Z eroberts $ */
-/**
- * @package Issue-Tracker
- * @subpackage Administration
- */
-
-if (eregi(basename(__FILE__),$_SERVER['PHP_SELF'])) {
-  print "Direct module access forbidden.";
-  exit;
-}
-
+Module::check();
 if (!empty($_POST['motd'])) {
-	if ($fp = @fopen(_INCLUDES_."motd","w")) {
+	if ($fp = @fopen(_INCLUDES_.'motd','w')) {
 		fwrite($fp,$_POST['motd']);
 		fclose($fp);
-    redirect();
+		redirect();
 	} else {
-		push_error("Could not open motd file for writing.");
+		push_error('Could not open motd file for writing.');
 	}
 }
 
 $links[] = array(
-  "txt" => "Back to Administration",
-  "url" => "?module=admin",
-  "img" => $_ENV['imgs']['back']
+	'txt' => 'Back to Administration',
+	'url' => '?module=admin',
+	'img' => $_ENV['imgs']['back']
 );
 
-if (file_exists(_INCLUDES_."motd")) {
-	if ($fp = fopen(_INCLUDES_."motd","r")) {
-		$motd = stripslashes(fread($fp,filesize(_INCLUDES_."motd")));
+if (file_exists(_INCLUDES_.'motd')) {
+	if ($fp = fopen(_INCLUDES_.'motd','r')) {
+		$motd = stripslashes(fread($fp,filesize(_INCLUDES_.'motd')));
 		fclose($fp);
-    $smarty->assign('motd',$motd);
+		$smarty->assign('motd',$motd);
 	} else {
-		push_error("Could not open motd file for reading.");
+		push_error('Could not open motd file for reading.');
 	}
 }
-
-$smarty->display("admin/edit_motd.tpl");
+Module::template('admin','edit_motd.tpl');
 ?>

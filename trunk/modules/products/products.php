@@ -1,9 +1,6 @@
 <?php
-/**
-* List existing products
-*/
-module_check();
-if (permission_check('product_manager')) {
+Module::check();
+if (Permission::check('product_manager')) {
 	$links[] = array(
 		'txt' => 'Back to Administration',
 		'url' => '?module=admin',
@@ -14,9 +11,9 @@ if (permission_check('product_manager')) {
 		'url' => '?module=admin&action=products&subaction=new',
 		'img' => $_ENV['imgs']['product']
 	);
-    $smarty->assign('products',product_list());
-	module_template('products','list.tpl');
+    $_ENV['tpl']->assign('products',product_list());
+	Module::template('products','list.tpl');
 } else {
-  redirect();
+	redirect();
 }
 ?>
