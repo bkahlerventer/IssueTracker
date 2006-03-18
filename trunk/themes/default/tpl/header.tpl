@@ -20,22 +20,7 @@
 <body marginheight="0" marginwidth="0" topmargin="0" leftmargin="0">
 {/if}
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td class="header" align="left" width="80%"><img src="{$smarty.env.imgs.logo}" width="200" height="48" alt="Issue Tracker" /></td>
-<td class="header" align="center" width="20%">
-{if !empty($smarty.session.userid)}
-{if (is_employee($smarty.session.userid)
-or permission_check("status_manager")
-or permission_check("category_manager")
-or permission_check("product_manager"))
-and $smarty.get.module != "help"}
-<a href="?module=admin"><img src="{$smarty.env.imgs.system}" alt="Administration" border="0" />Administration</a>
-{else}
-&nbsp;
-{/if}
-{/if}
-</td>
-</tr>
+<tr><td class="header" align="left" colspan="2"><img src="{$smarty.env.imgs.logo}" width="200" height="48" alt="Issue Tracker" /></td></tr>
 {if !empty($smarty.session.userid)}
 <tr>
 {if ereg("(4.7)|(4.8)",$smarty.server.HTTP_USER_AGENT)}
@@ -43,7 +28,7 @@ and $smarty.get.module != "help"}
 {else}
 <td class="crumb" width="50%"> .:{$crumbs}</td>
 {/if}
-{if $smarty.get.module ne "help"}
+{if $smarty.get.module ne 'help'}
 <td class="crumb" align="right" valign="top" width="50%">
 <form method="post" action="?module=issues&action=view">
 <input type="text" size="6" name="issueid" /><input type="submit" value="View Issue" />

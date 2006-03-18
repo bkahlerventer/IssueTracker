@@ -58,7 +58,7 @@ function product_create($product,$categories = array()) {
 */
 function product_delete($product_id) {
 	if (preg_match('/^[0-9]+$/',$product_id)) {
-		$_ENV['dbi']->query("DELETE FROM products WHERE pid='".$product_id."'");
+		$_ENV['dbi']->delete('products',array('pid'=>$product_id));
 		return TRUE;
 	}
 	return FALSE;

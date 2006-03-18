@@ -1,63 +1,4 @@
 <?php
-/* $Id: sql.func.php 7 2004-12-06 22:06:36Z eroberts $ */
-
-/* {{{ Function: admin_notify */
-/**
- * Notify all admins by email with message
- * 
- * @param string $message Message to send to admins
- * @returns nothing
- */
-function admin_notify($message)
-{
-  global $dbi;
-
-  $sql  = "SELECT email ";
-  $sql .= "FROM users ";
-  $sql .= "WHERE admin='t'";
-  $emails = $dbi->fetch_all($sql);
-  if (is_array($emails)) {
-    // Make sure we have the mailer class and initialize it
-    include_once(_CLASSES_."mail.class.php");
-    if (!is_object($mailer)) {
-      $mailer = new MAILER();
-      $mailer->set("email_from",_EMAIL_);
-    }
-    $mailer->subject("Issue Tracker Admin Alert");
-    $mailer->to($emails);
-    $mailer->message($message);
-    $mailer->send();
-  }
-}
-/* }}} */
-
-/* {{{ Function: getfield */
-/**
- * Retrieve a field from a table by an id
- *
- * @param string $table Table to pull field from
- * @param string $field Field to pull from table
- * @param integer $id ID to match
- * @returns string
- */
-function getfield($table,$field,$idfield,$id)
-{
-  global $dbi;
-
-  $sql  = "SELECT $field ";
-  $sql .= "FROM $table ";
-  $sql .= "WHERE $idfield='$id'";
-  $result = $dbi->query($sql);
-  if ($dbi->num_rows($result) > 0) {
-    list($data) = $dbi->fetch($result);
-    return stripslashes($data);
-  }
-
-  return "UNKNOWN";
-}
-/* }}} */
-
-/* {{{ Function: category */
 /**
  * Wrapper function for getfield to retrieve Category name
  *
@@ -81,7 +22,6 @@ function category($cid)
  
   return getfield("categories","category","cid",$cid);
 }
-/* }}} */
 
 /* {{{ Function: product */
 /**
