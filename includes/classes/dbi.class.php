@@ -502,11 +502,7 @@ class DBI {
 	*/
 	function getfield($table,$field,$idfield,$id,$cache_time = 15) {
 		$sql = "SELECT {$field} FROM {$table} WHERE {$idfield}='{$id}'";
-		$data = $this->fetch_one($sql,$cache_time);
-		if (!empty($data)) {
-			return $data;
-		}
-		return FALSE;
+		return $this->fetch_one($sql,$cache_time);
 	}
 
 	/**
