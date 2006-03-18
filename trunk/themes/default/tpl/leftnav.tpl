@@ -1,29 +1,32 @@
 <!-- Begin leftnav.tpl -->
-<td valign="top" class="leftnav" width="150">
-{opennavtable}
-<tr><td class="titlebar">Main Menu</td></tr>
+		<div id="navigation">
+			<fieldset>
+				<legend>Main Menu</legend>
 {foreach from=$smarty.env.menu key=key item=val}
-{if !is_integer($key)}
+{if !preg_match('/^[0-9]+$/',$key)}
 {if !is_array($val)}
-<tr><td class="menu"><a href="{$val}">{$key}</a></td></tr>
+				<div class="menu"><a href="{$val}">{$key}</a></div>
 {elseif !empty($val.url)}
-<tr><td class="menu"><a href="{$val.url}">{$key}</a></td></tr>
+				<div class="menu"><a href="{$val.url}">{$key}</a></div>
 {else}
-<tr><td class="menu">{$key}</td></tr>
+				<div class="menu">{$key}</div
 {/if}
 {/if}
 {if is_array($val.sub) and count($val.sub) > 0}
-<tr>
-<td class="submenu">
+				<div class="submenu">
 {foreach from=$val.sub key=txt item=url}
-<li><a href="{$url}">{$txt}</a></li>
+					<a href="{$url}">{$txt}</a><br />
 {/foreach}
-</td>
-</tr>
+				</div>
 {/if}
 {/foreach}
-{closenavtable}
-</td>
-<td valign="top" style="padding: 4px;" width="100%" align="center">
+				<div class="menu">
+					<form method="post" action="?module=issues&action=view" title="View Issue">
+						<input type="text" size="6" name="issueid" /><input type="submit" value="Go" />
+					</form>
+				</div>
+			</fieldset>
+		</div>
+		<div id="content">
 <!-- End leftnav.tpl -->
 

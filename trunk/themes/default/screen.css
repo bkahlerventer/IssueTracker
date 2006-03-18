@@ -7,11 +7,14 @@ a, a:visited {text-decoration:none;}
 a:hover {color:highlight !important;text-decoration:underline!important;}
 .buttons {color:black;background:#999;border:1px solid gray;width:98%;}
 .iconbar {text-align: right;background:#ccc;border:1px solid gray;width:99%;margin-bottom:4px;padding:2px;}
-img {vertical-align:middle;}
+img {vertical-align:middle;border:none;}
 .fixed {font-family:courier;}
-.header, .header a, .header a:visited {vertical-align:middle;background:black;color:white;padding:2px;}
-.crumb {font-weight:bold;color:white;background:#333;padding:2px;margin:2px;vertical-align:middle;border-top:1px solid gray;border-bottom:1px solid gray;}
-.crumb a, .crumb a:visited {font-weight:bold;color:white;background:#333;padding:2px;margin:2px;vertical-align:middle;}
+#header, #header a, #header a:visited {vertical-align:middle;background:black;color:white;padding:2px;}
+#crumbbar {font-weight:bold;color:white;background:#333;padding:2px;vertical-align:middle;border-top:1px solid gray;border-bottom:1px solid gray;}
+#crumbs {clear:none;}
+#crumbs a, #crumbs a:visited {font-weight:bold;color:white;background:#333;padding:2px;margin:2px;vertical-align:middle;}
+#viewissue {clear:right;}
+#viewissue form {display:inline;}
 .titlebar, .titlebar a, .titlebar a:visited {background:#369;color:white;font-weight:bold;}
 .subtitle, .subtitle a, .subtitle a:visited {background:#333;color:white;}
 .tablehead, .tablehead td, .tablehead a, .tablehead a:visited {color:black;background:#666;font-weight:bold;}
@@ -20,20 +23,23 @@ img {vertical-align:middle;}
 .data {color:black;background:#ccc;}
 .row1, .row1 td, .row1 a, .row1 a:visited {color:black;background:white;}
 .row2, .row2 td, .row2 a, .row2 a:visited {color:black;background:#ddd;}
-.menu, .menu a, .menu a:visited {color:black;background:#999;}
-.submenu, .submenu a, .submenu a:visited {color:black;background:#ccc;}
+.menu, .menu a, .menu a:visited {font-weight:bold;padding-left:0.25em;}
+.submenu a {padding-left:0.75em;}
 .error {color:red;background:#ccc;font-weight:bold;}
 .required {color:red;background:transparent;font-weight:bold;}
 .borders, .borders td {border:1px solid gray;}
 .noborders, .noborders td {border:none;}
-.leftnav {padding:0px;margin:0px;border-right:1px solid gray;}
-.leftnav td {border:none;border-bottom:1px solid gray;}
-.rightnav {padding:0px;margin:0px;border-left:1px solid gray;}
-.rightnav td {border:none;border-bottom:1px solid gray;}
+#navigation {padding:0.5em;margin:0px;width:150px;clear:left;float:left;}
+#navigation div {padding:2px;}
+#content {width:800px;clear:right;float:left;padding:0.5em;}
 input, select, textarea {border:1px solid gray;margin: 2px;background:#eee;}
 textarea {width:99%;}
 .privateupdate {vertical-align:top;background:white url(themes/default/images/private-event.png) no-repeat center;}
-.footer {border-top:1px solid gray;}
+#footer {border-top:1px solid gray;margin-top:1em;clear:both;}
 form {display:inline;}
 .debug {margin:2px;padding:2px;}
-.login {color:black;background:#ccc;border:1px solid gray;}
+#login {width:150px;float:left;clear:left;text-align:right;padding:0.5em;}
+fieldset,legend {border:1px solid #333;padding:0.25em;}
+fieldset {background:#ccc;}
+legend {color:white;background:#369;font-weight:bold;}
+label {font-weight:bold;}
