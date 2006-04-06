@@ -1,64 +1,47 @@
 <?php
-if ($_SESSION['prefs']['imgext'] == "gif"
-or ereg("(4.7)|(4.8)",$_SERVER['HTTP_USER_AGENT'])) {
-  define("IMGDIR","themes/default/images/gif/");
-  $imgext = "gif";
-} else {
-  define("IMGDIR","themes/default/images/png/");
-  $imgext = "png";
-}
-
-/**
- * Available image extensions for this theme
- * format:
- *  ext => comment
- */
-$_ENV['image_exts'] = array(
-  "png" => "Look better, but load slower in Internet Explorer",
-  "gif" => "",
-);
+define('IMGDIR','themes/default/images/png/');
 
 $_ENV['imgs'] = array(
-  "announce"      => IMGDIR."announce.$imgext",
-  "back"          => IMGDIR."back.$imgext",
-  "category"      => IMGDIR."category.$imgext",
-  "debug"         => IMGDIR."debug.$imgext",
-  "deescalate"    => IMGDIR."deescalate.$imgext",
-  "delete"        => IMGDIR."delete.$imgext",
-  "edit"          => IMGDIR."edit.$imgext",
-  "email"         => IMGDIR."email.$imgext",
-  "escalate"      => IMGDIR."escalate.$imgext",
-  "file"          => IMGDIR."file.$imgext",
-  "group"         => IMGDIR."group.$imgext",
-  "help"          => IMGDIR."help.$imgext",
-  "hide_closed"   => IMGDIR."hide_closed.$imgext",
-  "high"          => IMGDIR."high.$imgext",
-  "issue_log"     => IMGDIR."issue_log.$imgext",
-  "logo"          => IMGDIR."logo.$imgext",
-  "low"           => IMGDIR."low.$imgext",
-  "motd"          => IMGDIR."motd.$imgext",
-  "move"          => IMGDIR."move.$imgext",
-  "new_announce"  => IMGDIR."new_announce.$imgext",
-  "new_group"     => IMGDIR."new_group.$imgext",
-  "new_issue"     => IMGDIR."new_issue.$imgext",
-  "new_user"      => IMGDIR."new_user.$imgext",
-  "no"            => IMGDIR."no.$imgext",
-  "normal"        => IMGDIR."normal.$imgext",
-  "ok"            => IMGDIR."ok.$imgext",
-  "permission"    => IMGDIR."permission.$imgext",
-  "print"         => IMGDIR."print.$imgext",
-  "private_event" => IMGDIR."private_event.$imgext",
-  "private"       => IMGDIR."private.$imgext",
-  "product"       => IMGDIR."product.$imgext",
-  "public"        => IMGDIR."public.$imgext",
-  "search"        => IMGDIR."search.$imgext",
-  "show_closed"   => IMGDIR."show_closed.$imgext",
-  "status"        => IMGDIR."status.$imgext",
-  "style"         => IMGDIR."style.$imgext",
-  "subscribe"     => IMGDIR."subscribe.$imgext",
-  "system"        => IMGDIR."system.$imgext",
-  "unsubscribe"   => IMGDIR."unsubscribe.$imgext",
-  "urgent"        => IMGDIR."urgent.$imgext",
-  "user"          => IMGDIR."user.$imgext"
+  'announce'      => IMGDIR.'announce.png',
+  'back'          => IMGDIR.'back.png',
+  'category'      => IMGDIR.'category.png',
+  'debug'         => IMGDIR.'debug.png',
+  'deescalate'    => IMGDIR.'deescalate.png',
+  'delete'        => IMGDIR.'delete.png',
+  'edit'          => IMGDIR.'edit.png',
+  'email'         => IMGDIR.'email.png',
+  'escalate'      => IMGDIR.'escalate.png',
+  'file'          => IMGDIR.'file.png',
+  'group'         => IMGDIR.'group.png',
+  'help'          => IMGDIR.'help.png',
+  'hide_closed'   => IMGDIR.'hide_closed.png',
+  'high'          => IMGDIR.'high.png',
+  'issue_log'     => IMGDIR.'issue_log.png',
+  'logo'          => IMGDIR.'logo.png',
+  'low'           => IMGDIR.'low.png',
+  'motd'          => IMGDIR.'motd.png',
+  'move'          => IMGDIR.'move.png',
+  'new_announce'  => IMGDIR.'new_announce.png',
+  'new_group'     => IMGDIR.'new_group.png',
+  'new_issue'     => IMGDIR.'new_issue.png',
+  'new_user'      => IMGDIR.'new_user.png',
+  'no'            => IMGDIR.'no.png',
+  'normal'        => IMGDIR.'normal.png',
+  'ok'            => IMGDIR.'ok.png',
+  'permission'    => IMGDIR.'permission.png',
+  'print'         => IMGDIR.'print.png',
+  'private_event' => IMGDIR.'private_event.png',
+  'private'       => IMGDIR.'private.png',
+  'product'       => IMGDIR.'product.png',
+  'public'        => IMGDIR.'public.png',
+  'search'        => IMGDIR.'search.png',
+  'show_closed'   => IMGDIR.'show_closed.png',
+  'status'        => IMGDIR.'status.png',
+  'style'         => IMGDIR.'style.png',
+  'subscribe'     => IMGDIR.'subscribe.png',
+  'system'        => IMGDIR.'system.png',
+  'unsubscribe'   => IMGDIR.'unsubscribe.png',
+  'urgent'        => IMGDIR.'urgent.png',
+  'user'          => IMGDIR.'user.png'
 );
 ?>

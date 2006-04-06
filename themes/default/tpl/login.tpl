@@ -49,27 +49,24 @@
 </td>
 <td width="80%" style="margin: 4px; padding: 4px;"><br />{$motd}</td>
 {else}
-		<div id="login">
-			<form method="post" name="loginForm" action="{$smarty.const._URL_}">
-				<input type="hidden" name="request" value="{$smarty.server.QUERY_STRING}" />
-				<script language="JavaScript" type="text/javascript">
-					document.write('<input type="hidden" name="javascript" value="enabled">');
-				</script>
-				<fieldset>
-					<legend>Issue-Tracker Login</legend>
-					<label for="username">Username:</label> <input type="text" size="16" name="username" /><br />
-					<label for="password">Password:</label> <input type="password" size="16" name="password" /><br />
-					<input type="submit" value="Login" />
-					<div align="center">
+{container title="Issue-Tracker Login"}
+	<form method="post" name="loginForm" action="{$smarty.const._URL_}">
+		<input type="hidden" name="request" value="{$smarty.server.QUERY_STRING}" />
+		<script language="JavaScript" type="text/javascript">
+			document.write('<input type="hidden" name="javascript" value="enabled">');
+		</script>
+		<label for="username">Username:</label> <input type="text" size="16" name="username" /><br />
+		<label for="password">Password:</label> <input type="password" size="16" name="password" /><br />
+		<input type="submit" value="Login" />
+		<div align="center">
 {if $allow_register eq TRUE}
-						<a href="?register=true">Register</a><br />
+			<a href="?register=true">Register</a><br />
 {/if}
-						<a href="?forgotten_password=true">Forgot your password?</a>
-					</div>
-				</fieldset>
-			</form>
+			<a href="?forgotten_password=true">Forgot your password?</a>
 		</div>
-		<div id="content">{$motd}</div>
+	</form>
+{/container}
+<div id="content">{$motd}</div>
 {/if}
 <!-- End login.tpl -->
 
