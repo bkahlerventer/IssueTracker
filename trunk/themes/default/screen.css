@@ -4,12 +4,12 @@ body,th,td,pre,div,span,li,a,input,select,textarea {font-size:10px;color:black;f
 table {border-collapse:collapse;}
 tr, td {vertical-align:top;empty-cells:show;border-collapse:collapse;}
 a, a:visited {text-decoration:none;}
-a:hover {color:highlight !important;text-decoration:underline!important;}
+a:hover {text-decoration:underline!important;}
 .buttons {color:black;background:#999;border:1px solid gray;width:98%;}
 .iconbar {text-align: right;background:#ccc;border:1px solid gray;width:99%;margin-bottom:4px;padding:2px;}
 img {vertical-align:middle;border:none;}
 .fixed {font-family:courier;}
-#header, #header a, #header a:visited {vertical-align:middle;background:black;color:white;padding:2px;}
+#header {vertical-align:middle;background:black;color:white;}
 #crumbbar {font-weight:bold;color:white;background:#333;padding:2px;vertical-align:middle;border-top:1px solid gray;border-bottom:1px solid gray;}
 #crumbs {clear:none;}
 #crumbs a, #crumbs a:visited {font-weight:bold;color:white;background:#333;padding:2px;margin:2px;vertical-align:middle;}
@@ -19,8 +19,8 @@ img {vertical-align:middle;border:none;}
 .subtitle, .subtitle a, .subtitle a:visited {background:#333;color:white;}
 .tablehead, .tablehead td, .tablehead a, .tablehead a:visited {color:black;background:#666;font-weight:bold;}
 .private {vertical-align:top;color:black;background:#ccc url('themes/default/images/private-event.png') no-repeat center;}
-.label {vertical-align:top;color:black;background:#999;}
-.data {color:black;background:#ccc;}
+.label {vertical-align:middle;width:100px;float:left;clear:left;text-align:right;}
+.data {vertical-align:top;width:650px;float:left;clear:right;}
 .row1, .row1 td, .row1 a, .row1 a:visited {color:black;background:white;}
 .row2, .row2 td, .row2 a, .row2 a:visited {color:black;background:#ddd;}
 .menu, .menu a, .menu a:visited {font-weight:bold;padding-left:0.25em;}
@@ -43,3 +43,17 @@ fieldset,legend {border:1px solid #333;padding:0.25em;}
 fieldset {background:#ccc;}
 legend {color:white;background:#369;font-weight:bold;}
 label {font-weight:bold;}
+.container {float:left;clear:left;padding:0.25em;}
+.container > .title {border-bottom:1px solid gray;font-weight:bold;}
+#menu {width:100%;background:#ccc;float:left;border-top:1px solid #333;border-bottom:1px solid #333;}
+#menu ul {list-style:none;margin:0;padding:0;width:12em;float:left;}
+#menu a, #menu h2 {font:bold 11px/16px arial, helvetica, sans-serif;display:block;margin:0;padding:2px 3px;}
+#menu ul ul {border-width:1px;border-style:solid;border-color:#ccc #888 #555 #bbb;}
+#menu h2 {text-transform:uppercase;}
+#menu a {color:#000;background:#efefef;text-decoration:none;}
+#menu a:hover {color:#a00;background:#fff;}
+#menu li {position:relative;font:bold 11px/16px arial,helvetica,sans-serif;}
+#menu ul ul {position:absolute;z-index:10;}
+#menu ul ul ul {top:0;left:100%;}
+#menu ul ul,#menu ul li:hover ul ul,#menu ul ul li:hover ul ul {display:none;}
+#menu ul li:hover ul,#menu ul ul li:hover ul,#menu ul ul ul li:hover ul {display:block;}
