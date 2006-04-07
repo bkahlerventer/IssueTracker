@@ -1,9 +1,13 @@
 <?php
 if (defined("BROWSER")) {
 	# Register template modifiers
-	$_ENV['tpl']->register_modifier('number_format','template_number_format');
+	$_ENV['tpl']->register_modifier('number_format','number_format');
 	$_ENV['tpl']->register_modifier('format','template_text_format');
 	$_ENV['tpl']->register_modifier('userdate','template_date_format');
+
+	# Register block functions
+	$_ENV['tpl']->register_block('container','container');
+	$_ENV['tpl']->register_block('subcontainer','subcontainer');
 
 	# Register template functions
 	$_ENV['tpl']->register_function('opennavtable','template_opennavtable');
@@ -24,10 +28,14 @@ if (defined("BROWSER")) {
 	$_ENV['tpl']->register_function('subtitle','template_subtitle');
 	$_ENV['tpl']->register_function('date_select','template_date_select');
 
-	/** Format number string */
-	function template_number_format($number,$decimal = 0) {
-		return number_format($number,$decimal);
+	/** Create a content container */
+	function container($params,$content,&$smarty,&$repeat) {
+		$smarty->assign('title',$params['title']);
+		$smarty->display('open_container.tpl');
+		echo($content);
+		$smarty->display('close_container.tpl');
 	}
+
 
 	/** Open navigation table */
 	function template_opennavtable($params,&$smarty) {
