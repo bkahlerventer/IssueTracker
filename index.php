@@ -57,6 +57,7 @@ if (empty($_GET['issueid'])) {
 	}
 }
 
+generate_navigation_menus();
 $_ENV['tpl']->display('header.tpl');
 
 if ((isset($_GET['module']) and file_exists(_MODULES_.$_GET['module'].'/noauth'))
@@ -67,11 +68,6 @@ or isset($_SESSION['userid'])) {
 
 	if (file_exists(_MODULES_.$_GET['module'].'/noauth')) {
 		$_GET['nonav'] = TRUE;
-	}
-
-	if (empty($_GET['nonav'])) {
-		generate_navigation_menus();
-		$_ENV['tpl']->display('leftnav.tpl');
 	}
 
 	if ($_GET['module'] != 'help' and !empty($_GET['module'])) {
@@ -134,5 +130,4 @@ or isset($_SESSION['userid'])) {
 }
 $_ENV['tpl']->display('footer.tpl');
 ob_end_flush();
-print_r($_ENV['menu']);
 ?>
