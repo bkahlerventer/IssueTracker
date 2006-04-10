@@ -1,10 +1,8 @@
 <?php
-define('IMGDIR','themes/default/images/png/');
+define('IMGDIR','themes/default/images/');
 
 $_ENV['imgs'] = array(
-  'announce'      => IMGDIR.'announce.png',
   'back'          => IMGDIR.'back.png',
-  'category'      => IMGDIR.'category.png',
   'debug'         => IMGDIR.'debug.png',
   'deescalate'    => IMGDIR.'deescalate.png',
   'delete'        => IMGDIR.'delete.png',
@@ -12,7 +10,6 @@ $_ENV['imgs'] = array(
   'email'         => IMGDIR.'email.png',
   'escalate'      => IMGDIR.'escalate.png',
   'file'          => IMGDIR.'file.png',
-  'group'         => IMGDIR.'group.png',
   'help'          => IMGDIR.'help.png',
   'hide_closed'   => IMGDIR.'hide_closed.png',
   'high'          => IMGDIR.'high.png',
@@ -21,10 +18,6 @@ $_ENV['imgs'] = array(
   'low'           => IMGDIR.'low.png',
   'motd'          => IMGDIR.'motd.png',
   'move'          => IMGDIR.'move.png',
-  'new_announce'  => IMGDIR.'new_announce.png',
-  'new_group'     => IMGDIR.'new_group.png',
-  'new_issue'     => IMGDIR.'new_issue.png',
-  'new_user'      => IMGDIR.'new_user.png',
   'no'            => IMGDIR.'no.png',
   'normal'        => IMGDIR.'normal.png',
   'ok'            => IMGDIR.'ok.png',
@@ -32,7 +25,6 @@ $_ENV['imgs'] = array(
   'print'         => IMGDIR.'print.png',
   'private_event' => IMGDIR.'private_event.png',
   'private'       => IMGDIR.'private.png',
-  'product'       => IMGDIR.'product.png',
   'public'        => IMGDIR.'public.png',
   'search'        => IMGDIR.'search.png',
   'show_closed'   => IMGDIR.'show_closed.png',
@@ -42,6 +34,22 @@ $_ENV['imgs'] = array(
   'system'        => IMGDIR.'system.png',
   'unsubscribe'   => IMGDIR.'unsubscribe.png',
   'urgent'        => IMGDIR.'urgent.png',
-  'user'          => IMGDIR.'user.png'
+);
+
+$_ENV['imgs']['menu'] = array(
+	'Current Issues'	=> IMGDIR.'issue.png',
+	'Groups'			=> IMGDIR.'group.png',
+	'Issues'			=> IMGDIR.'issue.png',
+	'Logout'			=> IMGDIR.'logout.png',
+	'Main' 				=> IMGDIR.'main.png',
+	'Menu' 				=> IMGDIR.'menu_base.png',
+	'My Assigned'		=> IMGDIR.'issue_myassign.png',
+	'My Opened'			=> IMGDIR.'issue_myassign.png',
+	'New Group'			=> IMGDIR.'new_group.png',
+	'New Issue'			=> IMGDIR.'new_issue.png',
+	'New User'			=> IMGDIR.'new_user.png',
+	'Preferences'		=> IMGDIR.'preferences.png',
+	'Search Issues'		=> IMGDIR.'issue_search.png',
+	'Users'				=> IMGDIR.'user.png'
 );
 ?>

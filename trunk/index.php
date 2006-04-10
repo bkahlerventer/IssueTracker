@@ -57,7 +57,6 @@ if (empty($_GET['issueid'])) {
 	}
 }
 
-generate_navigation_menus();
 $_ENV['tpl']->display('header.tpl');
 
 if ((isset($_GET['module']) and file_exists(_MODULES_.$_GET['module'].'/noauth'))
