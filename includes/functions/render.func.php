@@ -27,6 +27,7 @@ if (defined("BROWSER")) {
 	$_ENV['tpl']->register_function('fsize','template_fsize');
 	$_ENV['tpl']->register_function('subtitle','template_subtitle');
 	$_ENV['tpl']->register_function('date_select','template_date_select');
+	$_ENV['tpl']->register_function('navigation','template_navigation');
 
 	/** Create a content container */
 	function container($params,$content,&$smarty,&$repeat) {
@@ -491,11 +492,39 @@ if (defined("BROWSER")) {
 	/**
 	* Generate the menu array to be used for navigation
 	*/
-	function generate_navigation_menus() {
+	function template_navigation() {
 		$_ENV['menu'] = array();
 		$_ENV['menu']['Main'] = _URL_;
 		Module::includes('menus');
+		$_ENV['menu']['Preferences'] = '?module=prefs';
 		$_ENV['menu']['Logout'] = '?logout=true';
+
+		$buffer = '<div id="menu"><ul><li><h2>';
+		$buffer .= array_key_exists('Menu',$_ENV['imgs']['menu']) 
+			? '<img src="'.$_ENV['imgs']['menu']['Menu'].'" border="0" /> ' : ' ';
+		$buffer .= ' Main Menu</h2><ul>';
+		foreach ($_ENV['menu'] as $module => $items) {
+			if (is_array($items)) {
+				$buffer .= '<li><a href="#">';
+				$buffer .= array_key_exists($module,$_ENV['imgs']['menu'])
+					? '<img src="'.$_ENV['imgs']['menu'][$module].'" border="0" /> ' : ' ';
+				$buffer .= $module.'</a><ul>';
+				foreach ($items as $label => $url) {
+					$buffer .= '<li><a href="'.$url.'">';
+					$buffer .= array_key_exists($label,$_ENV['imgs']['menu'])
+						? '<img src="'.$_ENV['imgs']['menu'][$label].'" border="0" /> ' : ' ';
+					$buffer .= $label.'</a></li>';
+				}
+				$buffer .= '</ul></li>';
+			} else {
+				$buffer .= '<li><a href="'.$items.'">';
+				$buffer .= array_key_exists($module,$_ENV['imgs']['menu'])
+					? '<img src="'.$_ENV['imgs']['menu'][$module].'" border="0" /> ' : ' ';
+				$buffer .= $module.' </a></li>';
+			}	
+		}
+		$buffer .= '</ul></li></ul></div>';
+		return $buffer;
 	}
 }
 ?>
