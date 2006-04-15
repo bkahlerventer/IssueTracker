@@ -1,8 +1,9 @@
-html, body {border-right: 0px !important;}
-body {background:white;margin:0px;padding:0px;}
-body,th,td,pre,div,span,li,a,input,select,textarea {font-size:10px;color:black;font-family:Verdana, Arial, Helvetica, sans-serif;background:transparent;}
+html {background:#369;}
+body {background:#fff;margin:0.5em;padding:0px;}
+body,th,td,pre,div,span,li,a,input,select,textarea {font-size:10px;color:black;font-family:sans,sans-serif;background:transparent;}
 table {border-collapse:collapse;}
 tr, td {vertical-align:top;empty-cells:show;border-collapse:collapse;}
+td {padding:2px;}
 a, a:visited {text-decoration:none;}
 a:hover {text-decoration:underline!important;}
 .buttons {color:black;background:#999;border:1px solid gray;width:98%;}
@@ -10,11 +11,9 @@ a:hover {text-decoration:underline!important;}
 img {vertical-align:middle;border:none;}
 .fixed {font-family:courier;}
 #header {vertical-align:middle;background:black;color:white;}
-#crumbbar {font-weight:bold;color:white;background:#333;padding:2px;vertical-align:middle;border-top:1px solid gray;border-bottom:1px solid gray;}
-#crumbs {clear:none;}
-#crumbs a, #crumbs a:visited {font-weight:bold;color:white;background:#333;padding:2px;margin:2px;vertical-align:middle;}
 #viewissue {clear:right;}
 #viewissue form {display:inline;}
+.titlebar {padding:0.25em;font-family:sans,sans-serif;}
 .titlebar, .titlebar a, .titlebar a:visited {background:#369;color:white;font-weight:bold;}
 .subtitle, .subtitle a, .subtitle a:visited {background:#333;color:white;}
 .tablehead, .tablehead td, .tablehead a, .tablehead a:visited {color:black;background:#666;font-weight:bold;}
@@ -27,33 +26,26 @@ img {vertical-align:middle;border:none;}
 .submenu a {padding-left:0.75em;}
 .error {color:red;background:#ccc;font-weight:bold;}
 .required {color:red;background:transparent;font-weight:bold;}
-.borders, .borders td {border:1px solid gray;}
+.borders, .borders td {border:1px solid #333;}
 .noborders, .noborders td {border:none;}
-#navigation {padding:0.5em;margin:0px;width:150px;clear:left;float:left;}
-#navigation div {padding:2px;}
-#content {width:800px;clear:right;float:left;padding:0.5em;}
+#content {background:#fff;padding:0.5em;}
 input, select, textarea {border:1px solid gray;margin: 2px;background:#eee;}
 textarea {width:99%;}
 .privateupdate {vertical-align:top;background:white url(themes/default/images/private-event.png) no-repeat center;}
-#footer {border-top:1px solid gray;margin-top:1em;clear:both;}
+#footer {border-top:1px solid gray;margin-top:1em;clear:both;padding:0.25em;background:#999;}
 form {display:inline;}
 .debug {margin:2px;padding:2px;}
 #login {width:150px;float:left;clear:left;text-align:right;padding:0.5em;}
-fieldset,legend {border:1px solid #333;padding:0.25em;}
-fieldset {background:#ccc;}
-legend {color:white;background:#369;font-weight:bold;}
 label {font-weight:bold;}
-.container {float:left;clear:left;padding:0.25em;}
-.container > .title {border-bottom:1px solid gray;font-weight:bold;}
-#menu {width:100%;background:#ccc;float:left;border-top:1px solid #333;border-bottom:1px solid #333;}
-#menu ul {list-style:none;margin:0;padding:0;width:12em;float:left;}
-#menu a, #menu h2 {font:bold 11px/16px arial, helvetica, sans-serif;display:block;margin:0;padding:2px 3px;}
-#menu ul ul {border-width:1px;border-style:solid;border-color:#ccc #888 #555 #bbb;}
-#menu h2 {text-transform:uppercase;}
-#menu a {color:#000;background:#efefef;text-decoration:none;}
-#menu a:hover {color:#a00;background:#fff;}
-#menu li {position:relative;font:bold 11px/16px arial,helvetica,sans-serif;}
-#menu ul ul {position:absolute;z-index:10;}
-#menu ul ul ul {top:0;left:100%;}
-#menu ul ul,#menu ul li:hover ul ul,#menu ul ul li:hover ul ul {display:none;}
-#menu ul li:hover ul,#menu ul ul li:hover ul,#menu ul ul ul li:hover ul {display:block;}
+.menu {background:#999;}
+.menu ul {list-style:none;margin:0;padding:0;width:15em;float:left;}
+.menu a, .menu h2 {font:bold 11px/16px arial, helvetica, sans-serif;display:block;margin:0;padding:2px 3px;}
+.menu ul ul {border-width:1px;border-style:solid;border-color:#ccc #888 #555 #bbb;}
+.menu h2 {text-transform:uppercase;}
+.menu a {color:#000;background:#efefef;text-decoration:none;}
+.menu a:hover {color:#a00;background:#fff;}
+.menu li {position:relative;font:bold 11px/16px arial,helvetica,sans-serif;}
+.menu ul ul {position:absolute;z-index:10;}
+.menu ul ul ul {top:0;left:100%;}
+.menu ul ul,.menu ul li:hover ul ul,.menu ul ul li:hover ul ul {display:none;}
+.menu ul li:hover ul,.menu ul ul li:hover ul,.menu ul ul ul li:hover ul {display:block;}

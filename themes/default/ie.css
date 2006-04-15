@@ -1,6 +1,4 @@
 img {behavior:url('themes/default/pngbehavior.htc');}
-fieldset {padding:1em;margin-top:1.5em;}
-legend {padding:0.3em;}
 body {behavior:url('themes/default/csshover2.htc');font-size:100%;} 
 #menu ul li {float:left;width:100%;}
 #menu ul li a {height:1%;} 

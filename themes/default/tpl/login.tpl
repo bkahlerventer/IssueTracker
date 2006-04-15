@@ -49,24 +49,23 @@
 </td>
 <td width="80%" style="margin: 4px; padding: 4px;"><br />{$motd}</td>
 {else}
-{container title="Issue-Tracker Login"}
-	<form method="post" name="loginForm" action="{$smarty.const._URL_}">
-		<input type="hidden" name="request" value="{$smarty.server.QUERY_STRING}" />
-		<script language="JavaScript" type="text/javascript">
-			document.write('<input type="hidden" name="javascript" value="enabled">');
-		</script>
-		<label for="username">Username:</label> <input type="text" size="16" name="username" /><br />
-		<label for="password">Password:</label> <input type="password" size="16" name="password" /><br />
-		<input type="submit" value="Login" />
-		<div align="center">
-{if $allow_register eq TRUE}
-			<a href="?register=true">Register</a><br />
-{/if}
-			<a href="?forgotten_password=true">Forgot your password?</a>
-		</div>
-	</form>
-{/container}
-<div id="content">{$motd}</div>
+<table cellspacing="0" cellpadding="0" border="0" align="center" class="borders">
+	<tr><td class="titlebar" colspan="2">Issue-Tracker Login</td></tr>
+	<tr>
+		<td align="right" width="150">
+			<form method="post" name="loginForm" action="{$smarty.const._URL_}">
+				<input type="hidden" name="request" value="{$smarty.server.QUERY_STRING}" />
+				<script language="JavaScript" type="text/javascript">
+					document.write('<input type="hidden" name="javascript" value="enabled">');
+				</script>
+				<label>Username:</label>&nbsp;<input type="text" size="16" name="username" /><br />
+				<label>Password:</label>&nbsp;<input type="password" size="16" name="password" /><br />
+				<input type="submit" value="Login" />
+			</form>
+		</td>
+		<td>{$motd}</td>
+	</tr>
+</table>
 {/if}
 <!-- End login.tpl -->
 
