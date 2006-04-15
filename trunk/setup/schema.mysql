@@ -1,321 +1,384 @@
 -- $Id: schema.mysql,v 1.4 2003/10/08 07:08:31 tuxmonkey Exp $
-
+-- vim: ts=2 sw=2 expandtab
 CREATE TABLE configuration (
-	variable VARCHAR(32) NOT NULL,
-	value MEDIUMTEXT NOT NULL,
-	constant CHAR(1) DEFAULT 'f'
+  name            VARCHAR(32)     NOT NULL,
+  value           TEXT            NOT NULL,
+  UNIQUE(name)
 );
 
 CREATE TABLE sessions (
-  session_id VARCHAR(32) NOT NULL,
-  session_data MEDIUMTEXT,
-  session_expires INTEGER NOT NULL
+  id              VARCHAR(32)     NOT NULL,
+  sessdata        TEXT            ,
+  expires         DATETIME        NOT NULL,
+  UNIQUE(id)
 );
 
 CREATE TABLE users (
-	userid INTEGER AUTO_INCREMENT, 
-	username VARCHAR(32) NOT NULL,
-	password VARCHAR(32) NOT NULL,
-	first_name VARCHAR(32),
-	last_name VARCHAR(32),
-	address VARCHAR(64),
-	address2 VARCHAR(64),
-	telephone VARCHAR(32),
-	email VARCHAR(64) NOT NULL,
-	sms VARCHAR(64),
-	admin CHAR(1) DEFAULT 'f',
-	active CHAR(1) DEFAULT 't',
-	theme VARCHAR(32),
-	PRIMARY KEY(userid)
-);
+  userid          SMALLINT        UNSIGNED AUTO_INCREMENT, 
+  username        VARCHAR(32)     NOT NULL,
+  password        VARCHAR(32)     NOT NULL,
+  first_name      VARCHAR(32)     NOT NULL,
+  last_name       VARCHAR(32)     NOT NULL,
+  contact_details TINYTEXT        ,
+  email           VARCHAR(64)     NOT NULL,
+  admin           ENUM('t','f')   DEFAULT 'f' NOT NULL,
+  active          ENUM('t','f')   DEFAULT 't' NOT NULL,
+  PRIMARY KEY(userid),
+  INDEX(last_name,first_name)
+) ENGINE=InnoDB;
+-- Default Users (Do not remove the client user)
+INSERT INTO users (username,password,email,first_name,last_name,admin) VALUES('admin','fe01ce2a7fbac8fafaed7c982a04e229','admin@localhost','Admin','User','t');
+INSERT INTO users (username,password,email,first_name,last_name) VALUES('demo','fe01ce2a7fbac8fafaed7c982a04e229','demo@localhost','Demo','User');
+INSERT INTO users (username,password,email,first_name,last_name,active) VALUES('client','c51019991f3032e2d102fbbfa2bc3a53','emailparser','Client','User','f');
 
 CREATE TABLE groups (
-	gid INTEGER AUTO_INCREMENT, 
-	name VARCHAR(255),
-	address VARCHAR(100),
-	address2 VARCHAR(100),
-	contact VARCHAR(64),
-	tech VARCHAR(64),
-	tao VARCHAR(64),
-	brm VARCHAR(64),
-	sales VARCHAR(64),
-	amount NUMERIC(12,2),
-	bought INTEGER,
-	used INTEGER,
-	start_date VARCHAR(16),
-	end_date VARCHAR(16),
-  group_type VARCHAR(12),
-	active CHAR(1) DEFAULT 't',
-	status_reports CHAR(1) DEFAULT 'f',
-	notes MEDIUMTEXT,
-	email VARCHAR(64),
-  prop_user CHAR(1) DEFAULT 'f',
-  prop_category CHAR(1) DEFAULT 'f',
-  prop_product CHAR(1) DEFAULT 'f',
-  prop_status CHAR(1) DEFAULT 'f',
-  prop_issue CHAR(1) DEFAULT 'f',
-  prop_announce CHAR(1) DEFAULT 'f',
-	PRIMARY KEY(gid)
-);
-
-CREATE TABLE menus (
-	mid INTEGER AUTO_INCREMENT,
-	userid INTEGER NOT NULL,
-	text VARCHAR(24) NOT NULL,
-	url MEDIUMTEXT NOT NULL,
-	PRIMARY KEY(mid)
-);
+  gid             TINYINT         UNSIGNED AUTO_INCREMENT, 
+  name            VARCHAR(64)     NOT NULL,
+  notes           TEXT            ,
+  email           VARCHAR(64)     ,
+  active          ENUM('t','f')   DEFAULT 't' NOT NULL,
+  PRIMARY KEY(gid),
+  UNIQUE(name),
+  INDEX(name)
+) ENGINE=InnoDB;
+-- Default Groups (Do not remove the Parser Rejects group)
+INSERT INTO groups (name,notes) VALUES('Employees','This group is the members that maintain the issue tracker system.'),
+  ('Demo Group','Just a demo group'),
+  ('Parser Rejects','This group is used to track emails that the parser rejects. (DO NOT DELETE)');
 
 CREATE TABLE permissions (
-	permid INTEGER AUTO_INCREMENT,
-	permission VARCHAR(32) NOT NULL,
-  group_perm CHAR(1) DEFAULT 'f',
-  user_perm CHAR(1) DEFAULT 'f',
-  permission_type SMALLINT NOT NULL DEFAULT '1',
-  system CHAR(1) DEFAULT 'f',
-	PRIMARY KEY(permid)
-);
+  permid          TINYINT         UNSIGNED AUTO_INCREMENT,
+  permission      VARCHAR(32)     NOT NULL,
+  group_perm      ENUM('t','f')   DEFAULT 'f' NOT NULL,
+  user_perm       ENUM('t','f')   DEFAULT 'f' NOT NULL,
+  system          ENUM('t','f')   DEFAULT 'f' NOT NULL,
+  PRIMARY KEY(permid),
+  INDEX(user_perm),
+  INDEX(group_perm)
+) ENGINE=InnoDB;
+-- Default Permissions
+INSERT INTO permissions (permission,system) VALUES('create_issues','t'),
+  ('create_announcements','t'),
+  ('view_private','t'),
+  ('upload_files','t'),
+  ('update_group','t'),
+  ('technician','t'),
+  ('move_issues','t'),
+  ('edit_events','t');
+INSERT INTO permissions (permission,user_perm,system) VALUES('product_manager','t','t'),
+  ('status_manager','t','t'),
+  ('category_manager','t','t');
 
 CREATE TABLE permission_sets (
-	permsetid INTEGER AUTO_INCREMENT,
-	name VARCHAR(32) NOT NULL,
-	description MEDIUMTEXT NOT NULL,
-	permissions MEDIUMTEXT NOT NULL,
-  system CHAR(1) DEFAULT 'f',
-	PRIMARY KEY(permsetid)
-);
+  permsetid       TINYINT         UNSIGNED AUTO_INCREMENT,
+  name            VARCHAR(32)     NOT NULL,
+  description     TEXT            NOT NULL,
+  permissions     VARCHAR(255)    NOT NULL,
+  system          ENUM('t','f')   DEFAULT 'f' NOT NULL,
+  PRIMARY KEY(permsetid)
+) ENGINE=InnoDB;
+-- Default Permission Sets
+INSERT INTO permission_sets (name,description,permissions,system) VALUES ('Group Administrator','This permission set is for group administrators. It gives the user all available privileges for the group.','create_issues,create_announcements,view_private,upload_files,update_group,technician,move_issues,edit_events','t'),
+  ('Client','This is the default client privilege set. It includes just enough permissions for a client to create issues and what would be required to update those issues with useful information.','create_issues,upload_files','t'),
+  ('Privileged Client','This permission set is the same as the standard client permission set, with the addition of the permission to create announcements.','create_issues,create_announcements,upload_files','t'),
+  ('Super Client','This permission set is the same as as the privileged client permission set, with the addition of the permission to view private events.','create_issues,create_announcements,view_private,upload_files','t'),
+  ('Technician','This is the standard group technician permission set.','create_issues,create_announcements,view_private,upload_files,technician','t');
 
 CREATE TABLE group_permissions (
-  permid INTEGER,
-  gid INTEGER
-);
+  permid          TINYINT         UNSIGNED NOT NULL
+    REFERENCES permissions (permid)
+      ON UPDATE CASCADE ON DELETE CASCADE,
+  gid             TINYINT         UNSIGNED NOT NULL
+    REFERENCES groups (gid)
+      ON UPDATE CASCADE ON DELETE CASCADE,
+  INDEX(gid,permid)
+) ENGINE=InnoDB;
 
 CREATE TABLE user_permissions (
-  permid INTEGER,
-  userid INTEGER
-);
+  permid          TINYINT         UNSIGNED NOT NULL
+    REFERENCES permissions (permid)
+      ON UPDATE CASCADE ON DELETE CASCADE,
+  userid          SMALLINT        UNSIGNED NOT NULL
+    REFERENCES users (userid)
+      ON UPDATE CASCADE ON DELETE CASCADE,
+  INDEX(userid,permid)
+) ENGINE=InnoDB;
 
 CREATE TABLE notifications (
-	nid INTEGER AUTO_INCREMENT,
-	gid INTEGER NOT NULL,
-	userid INTEGER NOT NULL,
-	type CHAR(1) DEFAULT 'E',
-	PRIMARY KEY(nid)
-);
+  gid             TINYINT         UNSIGNED NOT NULL
+    REFERENCES groups (gid)
+      ON UPDATE CASCADE ON DELETE CASCADE,
+	userid          SMALLINT        UNSIGNED NOT NULL
+    REFERENCES users (userid)
+      ON UPDATE CASCADE ON DELETE CASCADE,
+  INDEX(gid,userid)
+) ENGINE=InnoDB;
 
 CREATE TABLE group_users (
-	gid INTEGER NOT NULL,
-	userid INTEGER NOT NULL,
-	perm_set INTEGER,
-	severity SMALLINT,
-	show_group CHAR(1) DEFAULT 't'
-);
+  gid             TINYINT         UNSIGNED NOT NULL
+    REFERENCES groups (gid)
+      ON UPDATE CASCADE ON DELETE CASCADE,
+  userid          SMALLINT        UNSIGNED NOT NULL
+    REFERENCES users (userid)
+      ON UPDATE CASCADE ON DELETE CASCADE,
+  perm_set        TINYINT         UNSIGNED DEFAULT '0' NOT NULL,
+  show_group      ENUM('t','f')   DEFAULT 't' NOT NULL,
+  INDEX(gid,userid)
+) ENGINE=InnoDB;
+-- Deafult Group users
+INSERT INTO group_users (userid,gid,perm_set) VALUES(1,1,1),(2,1,2),(1,2,1),(2,2,2);
 
 CREATE TABLE statuses (
-	sid INTEGER AUTO_INCREMENT,
-	status VARCHAR(32) NOT NULL,
-  status_type SMALLINT,
-	PRIMARY KEY(sid)
-);
+  sid             TINYINT         UNSIGNED AUTO_INCREMENT,
+  status          VARCHAR(32)     NOT NULL,
+  status_type     TINYINT         UNSIGNED NOT NULL,
+  PRIMARY KEY(sid),
+  UNIQUE(status),
+  INDEX(status_type)
+) ENGINE=InnoDB;
+-- Default Statuses
+INSERT INTO statuses (status,status_type) VALUES('Registered',1),
+  ('Waiting on Tech',2),
+  ('Waiting on Client',2),
+  ('Closed by Tech',5),
+  ('Closed by Client',5),
+  ('Long Term',3),
+  ('Stale',4),
+  ('Auto Closed',6);
 
 CREATE TABLE categories (
-	cid INTEGER AUTO_INCREMENT, 
-	category VARCHAR(64) NOT NULL,
-	PRIMARY KEY(cid)
-);
+  cid             TINYINT         UNSIGNED AUTO_INCREMENT, 
+  category        VARCHAR(64)     NOT NULL,
+  PRIMARY KEY(cid),
+  UNIQUE(category)
+) ENGINE=InnoDB;
+-- Default Categories
+INSERT INTO categories (category) VALUES('Demo Category');
 
 CREATE TABLE products (
-	pid INTEGER AUTO_INCREMENT, 
-	product VARCHAR(128) NOT NULL,
-	PRIMARY KEY(pid)
-);
+  pid             TINYINT         UNSIGNED AUTO_INCREMENT, 
+  product         VARCHAR(128)    NOT NULL,
+  PRIMARY KEY(pid),
+  UNIQUE(product)
+) ENGINE=InnoDB;
+-- Default Products
+INSERT INTO products (product) VALUES('Demo Product');
 
 CREATE TABLE issues (
-	issueid INTEGER AUTO_INCREMENT,
-	gid INTEGER NOT NULL,
-	opened_by INTEGER NOT NULL,
-	opened INTEGER NOT NULL,
-	closed INTEGER,
-	modified INTEGER,
-	summary MEDIUMTEXT NOT NULL,
-	problem MEDIUMTEXT NOT NULL,
-	status SMALLINT NOT NULL,
-	category SMALLINT,
-	product INTEGER,
-	severity SMALLINT NOT NULL,
-	private CHAR(1) DEFAULT 'f',
-	flags MEDIUMTEXT,
-  istatus SMALLINT,
-  iseverity SMALLINT,
-  due_date INTEGER,
-	PRIMARY KEY(issueid)
-);
+  issueid         MEDIUMINT       UNSIGNED AUTO_INCREMENT,
+  gid             TINYINT         UNSIGNED NOT NULL
+    REFERENCES groups (gid)
+      ON UPDATE CASCADE ON DELETE RESTRICT,
+  openedby        SMALLINT        UNSIGNED NOT NULL
+    REFERENCES users (userid)
+      ON UPDATE CASCADE ON DELETE RESTRICT,
+  assignedto      SMALLINT        UNSIGNED
+    REFERENCES users (userid)
+      ON UPDATE CASCADE ON DELETE RESTRICT,
+  opened          DATETIME        DEFAULT 'NOW()' NOT NULL,
+  closed          DATETIME        ,
+  modified        TIMESTAMP(14)   NOT NULL,
+  summary         VARCHAR(255)    NOT NULL,
+  problem         TEXT            NOT NULL,
+  status          TINYINT         UNSIGNED NOT NULL
+    REFERENCES statuses (sid)
+      ON UPDATE CASCADE ON DELETE RESTRICT,
+  category        TINYINT         UNSIGNED DEFAULT 0 NOT NULL
+    REFERENCES categories (cid)
+      ON UPDATE CASCADE ON DELETE RESTRICT,
+  product         TINYINT         UNSIGNED DEFAULT 0 NOT NULL
+    REFERENCES products (pid)
+      ON UPDATE CASCADE ON DELETE RESTRICT,
+  severity        TINYINT         UNSIGNED NOT NULL,
+  private         ENUM('t','f')   DEFAULT 'f' NOT NULL,
+  due_date        DATETIME        ,
+  PRIMARY KEY(issueid),
+  INDEX(gid),
+  INDEX(openedby),
+  INDEX(assignedto),
+  INDEX(gid,status,category,product,severity)
+) ENGINE=InnoDB;
 
 CREATE TABLE events (
-	eid INTEGER AUTO_INCREMENT, 
-	issueid INTEGER NOT NULL,
-	status SMALLINT,
-	userid INTEGER,
-	performed_on INTEGER NOT NULL,
-	duration NUMERIC(6,2) DEFAULT '0.00',
-	fid INTEGER,
-	private CHAR(1) DEFAULT 'f',
-	action MEDIUMTEXT NOT NULL,
-	PRIMARY KEY(eid)
-);
+  eid             INTEGER         UNSIGNED AUTO_INCREMENT,
+  issueid         MEDIUMINT       UNSIGNED NOT NULL
+    REFERENCES issues (issueid)
+      ON UPDATE CASCADE ON DELETE CASCADE,
+  userid          SMALLINT        UNSIGNED NOT NULL
+    REFERENCES users (userid)
+      ON UPDATE CASCADE ON DELETE RESTRICT,
+  event_time      DATETIME        DEFAULT 'NOW()' NOT NULL,
+  duration        NUMERIC(6,2)    DEFAULT '0.00' NOT NULL,
+  private         ENUM('t','f')   DEFAULT 'f' NOT NULL,
+  message         TEXT            NOT NULL,
+  PRIMARY KEY(eid),
+  INDEX(issueid)
+) ENGINE=InnoDB;
 
-CREATE TABLE files (
-	fid INTEGER AUTO_INCREMENT,
-	userid INTEGER,
-	typeid INTEGER NOT NULL,
-	uploaded_on INTEGER,
-	filetype VARCHAR(16) NOT NULL,
-	filesize BIGINT DEFAULT 0 NOT NULL,
-	filename TEXT NOT NULL,
-	private CHAR(1) DEFAULT 'f',
-	PRIMARY KEY(fid)
-);
+CREATE TABLE file_details (
+  fid             MEDIUMINT       UNSIGNED AUTO_INCREMENT,
+  userid          SMALLINT        UNSIGNED NOT NULL
+    REFERENCES users (userid)
+      ON UPDATE CASCADE ON DELETE RESTRICT,
+  issue_file      ENUM('t','f')   DEFAULT 'f' NOT NULL,        
+  typeid          MEDIUMINT       UNSIGNED NOT NULL,
+  uploaded_on     DATETIME        DEFAULT 'NOW()' NOT NULL,
+  filesize        MEDIUMINT       UNSIGNED DEFAULT 0 NOT NULL,
+  filename        TEXT            NOT NULL,
+  private         ENUM('t','f')   DEFAULT 'f' NOT NULL,
+  PRIMARY KEY(fid),
+  INDEX(typeid,issue_file)
+) ENGINE=InnoDB;
 
-CREATE TABLE event_modifications (
-	eid INTEGER NOT NULL,
-	modified INTEGER NOT NULL,
-	userid INTEGER NOT NULL,
-	changes MEDIUMTEXT NOT NULL
-);
+CREATE TABLE file_data (
+  fid             MEDIUMINT       UNSIGNED NOT NULL
+    REFERENCES file_details (fid)
+      ON UPDATE CASCADE ON DELETE CASCADE,
+  filedata        MEDIUMBLOB      NOT NULL,
+  UNIQUE(fid),
+  INDEX(fid)
+) ENGINE=InnoDB;
 
 CREATE TABLE alerts (
-	aid INTEGER AUTO_INCREMENT,
-	title VARCHAR(128) NOT NULL,
-	message MEDIUMTEXT NOT NULL,
-	posted INTEGER,
-	userid INTEGER,
-	is_global CHAR(1) DEFAULT 'f',
-	PRIMARY KEY(aid)
-);
+  aid             SMALLINT        UNSIGNED AUTO_INCREMENT,
+  title           VARCHAR(128)    NOT NULL,
+  message         TEXT            NOT NULL,
+  posted          DATETIME        DEFAULT 'NOW()' NOT NULL,
+  userid          SMALLINT        UNSIGNED NOT NULL
+    REFERENCES users (userid)
+      ON UPDATE CASCADE ON DELETE RESTRICT,
+  system          ENUM('t','f')   DEFAULT 'f' NOT NULL,
+	PRIMARY KEY(aid),
+  INDEX(system)
+) ENGINE=InnoDB;
 
 CREATE TABLE alert_permissions (
-	aid INTEGER NOT NULL,
-	gid INTEGER NOT NULL
-);
+  aid             SMALLINT        UNSIGNED NOT NULL
+    REFERENCES alerts (aid)
+      ON UPDATE CASCADE ON DELETE CASCADE,
+  gid             TINYINT         UNSIGNED NOT NULL
+    REFERENCES groups (gid)
+      ON UPDATE CASCADE ON DELETE RESTRICT,
+  INDEX(gid,aid)
+) ENGINE=InnoDB;
 
 CREATE TABLE subscriptions (
-	sub_id INTEGER AUTO_INCREMENT,
-	userid INTEGER NOT NULL,
-	issueid INTEGER NOT NULL,
-	PRIMARY KEY(sub_id)
-);
-
-CREATE TABLE status_reports (
-	userid INTEGER,
-	gid INTEGER,
-	date_entered INTEGER NOT NULL,
-	info MEDIUMTEXT,
-	standing SMALLINT
-);
+	userid          SMALLINT        UNSIGNED NOT NULL
+    REFERENCES users (userid)
+      ON UPDATE CASCADE ON DELETE CASCADE,
+	issueid         MEDIUMINT       UNSIGNED NOT NULL
+    REFERENCES issues (issueid)
+      ON UPDATE CASCADE ON DELETE CASCADE,
+  INDEX(issueid,userid)
+) ENGINE=InnoDB;
 
 CREATE TABLE view_tracking (
-  vid INTEGER AUTO_INCREMENT,
-	issueid INTEGER NOT NULL,
-	userid INTEGER NOT NULL,
-	viewed INTEGER NOT NULL,
-  PRIMARY KEY(vid)
-);
+  issueid         MEDIUMINT       UNSIGNED NOT NULL
+    REFERENCES issues (issueid)
+      ON UPDATE CASCADE ON DELETE CASCADE,
+  userid          SMALLINT        UNSIGNED NOT NULL
+    REFERENCES users (userid)
+      ON UPDATE CASCADE ON DELETE CASCADE,
+  viewed          TIMESTAMP(14)   NOT NULL,
+  INDEX(userid,issueid)
+) ENGINE=InnoDB;
 
 CREATE TABLE logs (
-	lid INTEGER AUTO_INCREMENT, 
-	log_type VARCHAR(32),
-	log_message MEDIUMTEXT NOT NULL,
-	log_time INTEGER NOT NULL,
-	log_user INTEGER NOT NULL,
-	PRIMARY KEY(lid)
-);
-
-CREATE TABLE issue_groups (
-	issueid INTEGER NOT NULL,
-	gid INTEGER NOT NULL,
-	assigned_to INTEGER,
-	opened INTEGER,
-	first_response INTEGER DEFAULT '0',
-	show_issue character(1) DEFAULT 't',
-	deescalated INTEGER
-);
-
-CREATE TABLE escalation_points (
-	gid INTEGER NOT NULL,
-	egid INTEGER NOT NULL
-);
+	log_type        VARCHAR(32)     ,
+	log_message     TEXT            NOT NULL,
+	log_time        DATETIME        NOT NULL,
+	log_user        SMALLINT        UNSIGNED NOT NULL
+    REFERENCES users (userid)
+      ON UPDATE CASCADE ON DELETE RESTRICT,
+  INDEX(log_type)
+) ENGINE=InnoDB;
 
 CREATE TABLE group_statuses (
-	gid INTEGER NOT NULL,
-	sid INTEGER NOT NULL
-);
-
-CREATE TABLE group_istatuses (
-  gid INTEGER NOT NULL,
-  sid INTEGER NOT NULL
-);
+  gid             TINYINT         UNSIGNED NOT NULL
+    REFERENCES groups (gid)
+      ON UPDATE CASCADE ON DELETE CASCADE,
+  sid             TINYINT         UNSIGNED NOT NULL
+    REFERENCES statuses (sid)
+      ON UPDATE CASCADE ON DELETE CASCADE,
+  INDEX(gid,sid)
+) ENGINE=InnoDB;
+-- Default Group Statuses
+INSERT INTO group_statuses (gid,sid) VALUES(1,1),(1,2),(1,3),(1,4),(1,5),(1,6),
+  (2,1),(2,2),(2,3),(2,4),(2,5),(2,6),
+  (3,1),(3,2),(3,3),(3,4),(3,5),(3,6);
 
 CREATE TABLE group_categories (
-	gid INTEGER NOT NULL,
-	cid INTEGER NOT NULL
-);
+  gid             TINYINT         UNSIGNED NOT NULL
+    REFERENCES groups (gid)
+      ON UPDATE CASCADE ON DELETE CASCADE,
+  cid             TINYINT         UNSIGNED NOT NULL
+    REFERENCES categories (cid)
+      ON UPDATE CASCADE ON DELETE CASCADE,
+  INDEX(gid,cid)
+) ENGINE=InnoDB;
+-- Default Group Categories
+INSERT INTO group_categories (gid,cid) VALUES(1,1),(2,1),(3,1);
 
 CREATE TABLE group_products (
-	gid INTEGER NOT NULL,
-	pid INTEGER NOT NULL 
-);
-
-CREATE TABLE issue_requesters (
-	issueid INTEGER NOT NULL,
-	requester VARCHAR(64) NOT NULL,
-	list VARCHAR(64) NOT NULL,
-  PRIMARY KEY(issueid)
-);
+  gid             TINYINT         UNSIGNED NOT NULL
+    REFERENCES groups (gid)
+      ON UPDATE CASCADE ON DELETE CASCADE,
+  pid             TINYINT         UNSIGNED NOT NULL
+    REFERENCES products (pid)
+      ON UPDATE CASCADE ON DELETE CASCADE,
+  INDEX(gid,pid)
+) ENGINE=InnoDB;
+-- Default Group Products
+INSERT INTO group_products (gid,pid) VALUES(1,1),(2,1),(3,1);
 
 CREATE TABLE issue_log (
-  ilogid INTEGER AUTO_INCREMENT,
-	issueid INTEGER NOT NULL,
-	userid INTEGER NOT NULL,
-	logged INTEGER NOT NULL,
-	message MEDIUMTEXT,
-  private CHAR(1) DEFAULT 'f',
-  PRIMARY KEY(ilogid)
-);
+  issueid         MEDIUMINT       UNSIGNED NOT NULL
+    REFERENCES issues (issueid)
+      ON UPDATE CASCADE ON DELETE CASCADE,
+  userid          SMALLINT        UNSIGNED NOT NULL
+    REFERENCES users (userid)
+      ON UPDATE CASCADE ON DELETE RESTRICT,
+	logged          TIMESTAMP(14)   NOT NULL,
+	message         TEXT            ,
+  private         ENUM('t','f')   DEFAULT 'f' NOT NULL,
+  INDEX(issueid,private)
+) ENGINE=InnoDB;
 
-CREATE TABLE user_prefs (
-	userid INTEGER NOT NULL,
-  preference VARCHAR(255),
-  value VARCHAR(255)
-);
-
-CREATE TABLE group_prefs (
-  gid INTEGER NOT NULL,
-  preference VARCHAR(255),
-  value VARCHAR(255)
-);
+CREATE TABLE preferences (
+  userid          SMALLINT        UNSIGNED NOT NULL
+    REFERENCES users (userid)
+      ON UPDATE CASCADE ON DELETE CASCADE,
+  preference      VARCHAR(64)     ,
+  value           VARCHAR(255)    ,
+  INDEX(userid)
+) ENGINE=InnoDB;
 
 CREATE TABLE xmlrpc_connections (
-	userid INTEGER NOT NULL,
-	token VARCHAR(32) NOT NULL,
-	ipaddr VARCHAR(15) NOT NULL,
-	UNIQUE(userid)
-);
-
-CREATE TABLE sub_groups (
-  parent_gid INTEGER NOT NULL,
-  child_gid INTEGER NOT NULL,
-  prop_user CHAR(1) DEFAULT 'f',
-  prop_category CHAR(1) DEFAULT 'f',
-  prop_product CHAR(1) DEFAULT 'f',
-  prop_status CHAR(1) DEFAULT 'f',
-  prop_issue CHAR(1) DEFAULT 'f',
-  prop_announce CHAR(1) DEFAULT 'f'
-);
+  userid          SMALLINT        UNSIGNED NOT NULL
+    REFERENCES users (userid)
+      ON UPDATE CASCADE ON DELETE CASCADE,
+  token           VARCHAR(32)     NOT NULL,
+  ipaddr          VARCHAR(15)     NOT NULL,
+  UNIQUE(userid)
+) ENGINE=InnoDB;
 
 CREATE TABLE reports (
-  rid INTEGER AUTO_INCREMENT,
-  userid INTEGER NOT NULL,
-  name VARCHAR(32) NOT NULL,
-  options MEDIUMTEXT NOT NULL,
-  PRIMARY KEY(rid)
-);
+  rid             SMALLINT        UNSIGNED AUTO_INCREMENT,
+  userid          SMALLINT        UNSIGNED NOT NULL
+    REFERENCES users (userid)
+      ON UPDATE CASCADE ON DELETE RESTRICT,
+  name            VARCHAR(32)     NOT NULL,
+  options         TEXT            NOT NULL,
+  PRIMARY KEY(rid),
+  INDEX(userid)
+) ENGINE=InnoDB;
+
+CREATE TABLE report_permissions (
+  rid             SMALLINT        UNSIGNED NOT NULL
+    REFERENCES reports (rid)
+      ON UPDATE CASCADE ON DELETE CASCADE,
+  userid          SMALLINT        UNSIGNED NOT NULL
+    REFERENCES users (userid)
+      ON UPDATE CASCADE ON DELETE CASCADE,
+  INDEX(userid,rid)
+) ENGINE=InnoDB;
