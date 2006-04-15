@@ -7,6 +7,21 @@ var sessionExpired = false
 var startDate
 var startSecs
 
+{literal}
+function toggle_display(id) {
+	if (document.layers) {
+		current = (document.layers[id].display == 'none') ? 'block' : 'none';
+		document.layers[id].display = current;
+	} else if (document.all) {
+		current = (document.all[id].style.display == 'none') ? 'block' : 'none';
+		document.all[id].style.display = current;
+	} else if (document.getElementById) {
+		vista = (document.getElementById(id).style.display == 'none') ? 'block' : 'none';
+		document.getElementById(id).style.display = vista;
+	}
+}
+{/literal}
+
 function loader() {ldelim}
   startDate = new Date()
   startSecs = (startDate.getHours() * 60 * 60) + (startDate.getMinutes() * 60) + startDate.getSeconds()
