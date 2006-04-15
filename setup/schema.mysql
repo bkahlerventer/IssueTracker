@@ -3,15 +3,15 @@
 CREATE TABLE configuration (
   name            VARCHAR(32)     NOT NULL,
   value           TEXT            NOT NULL,
-  UNIQUE(name)
-);
+  INDEX(name)
+) ENGINE=InnoDB;
 
 CREATE TABLE sessions (
   id              VARCHAR(32)     NOT NULL,
   sessdata        TEXT            ,
   expires         DATETIME        NOT NULL,
-  UNIQUE(id)
-);
+  INDEX(id)
+) ENGINE=InnoDB;
 
 CREATE TABLE users (
   userid          SMALLINT        UNSIGNED AUTO_INCREMENT, 
@@ -38,7 +38,6 @@ CREATE TABLE groups (
   email           VARCHAR(64)     ,
   active          ENUM('t','f')   DEFAULT 't' NOT NULL,
   PRIMARY KEY(gid),
-  UNIQUE(name),
   INDEX(name)
 ) ENGINE=InnoDB;
 -- Default Groups (Do not remove the Parser Rejects group)
@@ -133,7 +132,6 @@ CREATE TABLE statuses (
   status          VARCHAR(32)     NOT NULL,
   status_type     TINYINT         UNSIGNED NOT NULL,
   PRIMARY KEY(sid),
-  UNIQUE(status),
   INDEX(status_type)
 ) ENGINE=InnoDB;
 -- Default Statuses
@@ -149,8 +147,7 @@ INSERT INTO statuses (status,status_type) VALUES('Registered',1),
 CREATE TABLE categories (
   cid             TINYINT         UNSIGNED AUTO_INCREMENT, 
   category        VARCHAR(64)     NOT NULL,
-  PRIMARY KEY(cid),
-  UNIQUE(category)
+  PRIMARY KEY(cid)
 ) ENGINE=InnoDB;
 -- Default Categories
 INSERT INTO categories (category) VALUES('Demo Category');
@@ -158,8 +155,7 @@ INSERT INTO categories (category) VALUES('Demo Category');
 CREATE TABLE products (
   pid             TINYINT         UNSIGNED AUTO_INCREMENT, 
   product         VARCHAR(128)    NOT NULL,
-  PRIMARY KEY(pid),
-  UNIQUE(product)
+  PRIMARY KEY(pid)
 ) ENGINE=InnoDB;
 -- Default Products
 INSERT INTO products (product) VALUES('Demo Product');
@@ -235,7 +231,6 @@ CREATE TABLE file_data (
     REFERENCES file_details (fid)
       ON UPDATE CASCADE ON DELETE CASCADE,
   filedata        MEDIUMBLOB      NOT NULL,
-  UNIQUE(fid),
   INDEX(fid)
 ) ENGINE=InnoDB;
 
@@ -359,7 +354,7 @@ CREATE TABLE xmlrpc_connections (
       ON UPDATE CASCADE ON DELETE CASCADE,
   token           VARCHAR(32)     NOT NULL,
   ipaddr          VARCHAR(15)     NOT NULL,
-  UNIQUE(userid)
+  INDEX(userid)
 ) ENGINE=InnoDB;
 
 CREATE TABLE reports (
