@@ -8,7 +8,31 @@
 <!--[if IE]>
 		<link rel="stylesheet" type="text/css" href="themes/default/ie.css" />
 <![endif]-->
-{include file="javascript.tpl"}
+		<script type="text/javascript">
+{literal}
+			function toggle_display(id) {
+				if (document.layers) {
+					current = (document.layers[id].display == 'none') ? 'block' : 'none';
+					document.layers[id].display = current;
+				} else if (document.all) {
+					current = (document.all[id].style.display == 'none') ? 'block' : 'none';
+					document.all[id].style.display = current;
+				} else if (document.getElementById) {
+					vista = (document.getElementById(id).style.display == 'none') ? 'block' : 'none';
+					document.getElementById(id).style.display = vista;
+				}
+			}
+{/literal}
+{if !empty($smarty.session.userid)}
+{if $smarty.session.prefs.local_tz eq 't'}
+			var d = new Date();
+			if (d.getTimezoneOffset) {ldelim}
+				var iMinutes = d.getTimezoneOffset()
+				document.cookie = "tz="+(iMinutes / 60)
+			{rdelim}
+{/if}
+{/if}
+		</script>
 	</head>
 	<body>
 		<table cellspacing="0" cellpadding="0" border="0" align="center" class="borders">
