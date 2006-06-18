@@ -21,8 +21,8 @@ CREATE TABLE users (
   last_name       VARCHAR(32)     NOT NULL,
   contact_details TINYTEXT        ,
   email           VARCHAR(64)     NOT NULL,
-  admin           ENUM('t','f')   DEFAULT 'f' NOT NULL,
-  active          ENUM('t','f')   DEFAULT 't' NOT NULL,
+  admin           BOOL            DEFAULT 0 NOT NULL,
+  active          BOOL            DEFAULT 1 NOT NULL,
   PRIMARY KEY(userid),
   INDEX(last_name,first_name)
 ) ENGINE=InnoDB;
@@ -36,7 +36,7 @@ CREATE TABLE groups (
   name            VARCHAR(64)     NOT NULL,
   notes           TEXT            ,
   email           VARCHAR(64)     ,
-  active          ENUM('t','f')   DEFAULT 't' NOT NULL,
+  active          BOOL            DEFAULT 1 NOT NULL,
   PRIMARY KEY(gid),
   INDEX(name)
 ) ENGINE=InnoDB;
@@ -48,9 +48,9 @@ INSERT INTO groups (name,notes) VALUES('Employees','This group is the members th
 CREATE TABLE permissions (
   permid          TINYINT         UNSIGNED AUTO_INCREMENT,
   permission      VARCHAR(32)     NOT NULL,
-  group_perm      ENUM('t','f')   DEFAULT 'f' NOT NULL,
-  user_perm       ENUM('t','f')   DEFAULT 'f' NOT NULL,
-  system          ENUM('t','f')   DEFAULT 'f' NOT NULL,
+  group_perm      BOOL            DEFAULT 0 NOT NULL,
+  user_perm       BOOL            DEFAULT 0 NOT NULL,
+  system          BOOL            DEFAULT 0 NOT NULL,
   PRIMARY KEY(permid),
   INDEX(user_perm),
   INDEX(group_perm)
@@ -73,7 +73,7 @@ CREATE TABLE permission_sets (
   name            VARCHAR(32)     NOT NULL,
   description     TEXT            NOT NULL,
   permissions     VARCHAR(255)    NOT NULL,
-  system          ENUM('t','f')   DEFAULT 'f' NOT NULL,
+  system          BOOL            DEFAULT 0 NOT NULL,
   PRIMARY KEY(permsetid)
 ) ENGINE=InnoDB;
 -- Default Permission Sets
@@ -121,7 +121,7 @@ CREATE TABLE group_users (
     REFERENCES users (userid)
       ON UPDATE CASCADE ON DELETE CASCADE,
   perm_set        TINYINT         UNSIGNED DEFAULT '0' NOT NULL,
-  show_group      ENUM('t','f')   DEFAULT 't' NOT NULL,
+  show_group      BOOL            DEFAULT 1 NOT NULL,
   INDEX(gid,userid)
 ) ENGINE=InnoDB;
 -- Deafult Group users
@@ -186,7 +186,7 @@ CREATE TABLE issues (
     REFERENCES products (pid)
       ON UPDATE CASCADE ON DELETE RESTRICT,
   severity        TINYINT         UNSIGNED NOT NULL,
-  private         ENUM('t','f')   DEFAULT 'f' NOT NULL,
+  private         BOOL            DEFAULT 0 NOT NULL,
   due_date        DATETIME        ,
   PRIMARY KEY(issueid),
   INDEX(gid),
@@ -205,7 +205,7 @@ CREATE TABLE events (
       ON UPDATE CASCADE ON DELETE RESTRICT,
   event_time      DATETIME        DEFAULT 'NOW()' NOT NULL,
   duration        NUMERIC(6,2)    DEFAULT '0.00' NOT NULL,
-  private         ENUM('t','f')   DEFAULT 'f' NOT NULL,
+  private         BOOL            DEFAULT 0 NOT NULL,
   message         TEXT            NOT NULL,
   PRIMARY KEY(eid),
   INDEX(issueid)
@@ -216,12 +216,12 @@ CREATE TABLE file_details (
   userid          SMALLINT        UNSIGNED NOT NULL
     REFERENCES users (userid)
       ON UPDATE CASCADE ON DELETE RESTRICT,
-  issue_file      ENUM('t','f')   DEFAULT 'f' NOT NULL,        
+  issue_file      BOOL            DEFAULT 0 NOT NULL,        
   typeid          MEDIUMINT       UNSIGNED NOT NULL,
   uploaded_on     DATETIME        DEFAULT 'NOW()' NOT NULL,
   filesize        MEDIUMINT       UNSIGNED DEFAULT 0 NOT NULL,
   filename        TEXT            NOT NULL,
-  private         ENUM('t','f')   DEFAULT 'f' NOT NULL,
+  private         BOOL            DEFAULT 0 NOT NULL,
   PRIMARY KEY(fid),
   INDEX(typeid,issue_file)
 ) ENGINE=InnoDB;
@@ -242,7 +242,7 @@ CREATE TABLE alerts (
   userid          SMALLINT        UNSIGNED NOT NULL
     REFERENCES users (userid)
       ON UPDATE CASCADE ON DELETE RESTRICT,
-  system          ENUM('t','f')   DEFAULT 'f' NOT NULL,
+  system          BOOL            DEFAULT 0 NOT NULL,
 	PRIMARY KEY(aid),
   INDEX(system)
 ) ENGINE=InnoDB;
@@ -335,7 +335,7 @@ CREATE TABLE issue_log (
       ON UPDATE CASCADE ON DELETE RESTRICT,
 	logged          TIMESTAMP(14)   NOT NULL,
 	message         TEXT            ,
-  private         ENUM('t','f')   DEFAULT 'f' NOT NULL,
+  private         BOOL            DEFAULT 0 NOT NULL,
   INDEX(issueid,private)
 ) ENGINE=InnoDB;
 

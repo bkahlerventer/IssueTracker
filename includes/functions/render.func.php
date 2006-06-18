@@ -499,7 +499,7 @@ if (defined("BROWSER")) {
 		$_ENV['menu']['Preferences'] = '?module=prefs';
 		$_ENV['menu']['Logout'] = '?logout=true';
 
-		$buffer = '<div id="menu"><ul><li><h2>';
+		$buffer = '<ul><li><h2>';
 		$buffer .= array_key_exists('Menu',$_ENV['imgs']['menu']) 
 			? '<img src="'.$_ENV['imgs']['menu']['Menu'].'" border="0" /> ' : ' ';
 		$buffer .= ' Main Menu</h2><ul>';
@@ -523,7 +523,7 @@ if (defined("BROWSER")) {
 				$buffer .= $module.' </a></li>';
 			}	
 		}
-		$buffer .= '</ul></li></ul></div>';
+		$buffer .= '</ul></li></ul>';
 		return $buffer;
 	}
 }

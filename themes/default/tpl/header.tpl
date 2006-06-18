@@ -35,7 +35,7 @@
 		</script>
 	</head>
 	<body>
-		<table cellspacing="0" cellpadding="0" border="0" align="center" class="borders">
+		<table cellspacing="0" cellpadding="0" border="0" align="center" width="98%" style="border:3px double #333;">
 			<tr>
 				<td id="header">
 					<img src="{$smarty.env.imgs.logo}" width="200" height="48" alt="Issue Tracker" />
