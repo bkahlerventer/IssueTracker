@@ -1,5 +1,3 @@
-/* $Id: THEMES,v 1.3 2003/10/08 07:06:21 tuxmonkey Exp $ */
-
 Issue-Tracker Themes
 --------------------
   Creating a theme for Issue-Tracker should be relatively simple for anyone

@@ -1,5 +1,3 @@
-/* $Id: README,v 1.3 2003/10/08 07:06:21 tuxmonkey Exp $ */
-
 Issue-Tracker v4.0 (The Grape)
 ------------------------------
   
@@ -15,7 +13,7 @@ quite a bit of information.
   As always if you find any bugs, have a comment, or just want to rant, you
 can catch me on the project forums at:
 
-  http://sourceforge.net/projects/issue-tracker/
+  (http://sourceforge.net/projects/issue-tracker/)
 
   See the CHANGELOG file for a list of changes between v3 and v4.
 
